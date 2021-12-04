@@ -57,15 +57,14 @@
                       <v-text-field
                         label="Column Name"
                         outlined
-                        dense
                         v-model="newColumn"
                       ></v-text-field>
-                      <v-select
-                        label="Select type of datas"
+                      <v-autocomplete
                         v-model="dataType"
+                        :items="dataTypes"
                         outlined
-                        :items="['Number', 'Text', 'Boolean']"
-                      ></v-select>
+                        label="Select type of datas"
+                      ></v-autocomplete>
                       <v-slider
                         label="Select Column Index"
                         step="1"
@@ -384,6 +383,7 @@ export default {
       newColumn: null,
       delColumn: null,
       dataType: null,
+      dataTypes: ['Number', 'Boolean', 'Text'],
       addColumnIndex: null,
       deleteColumnDialog: false,
     }

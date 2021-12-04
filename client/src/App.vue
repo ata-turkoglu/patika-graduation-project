@@ -11,14 +11,17 @@
         </v-toolbar-title>
       </router-link>
       <v-spacer></v-spacer>
-      <v-container class="nav-router" v-if="$vuetify.breakpoint.smAndUp">
+      <v-container
+        class="nav-router"
+        v-if="$vuetify.breakpoint.smAndUp && $store.state.user.user"
+      >
         <v-row justify="center">
-          <v-col sm="6" md="4" lg="2" xl="2" class="p-0 d-flex justify-center">
+          <v-col sm="6" md="4" lg="3" xl="2" class="p-0 d-flex justify-center">
             <router-link v-slot="{ href, navigate }" to="/dashboard" custom>
               <v-btn :href="href" @click="navigate" text> Dashboard </v-btn>
             </router-link>
           </v-col>
-          <v-col sm="6" md="4" lg="2" xl="2" class="p-0 d-flex justify-center">
+          <v-col sm="6" md="4" lg="3" xl="2" class="p-0 d-flex justify-center">
             <router-link v-slot="{ href, navigate }" to="/" custom>
               <v-btn :href="href" @click="navigate" text> User Settings </v-btn>
             </router-link>
@@ -26,6 +29,37 @@
         </v-row>
       </v-container>
       <v-spacer></v-spacer>
+      <v-menu offset-y left>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on" :width="$store.state.user.user ? 100 : ''">
+            <span v-if="$store.state.user.user" class="mr-6">
+              {{ $store.state.user.user.username }}
+            </span>
+            <v-icon v-else>mdi-account</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-btn elevation="0" color="white" @click="loginDialog = true">
+              <v-icon class="mr-2">mdi-login-variant</v-icon>
+              Log In
+            </v-btn>
+          </v-list-item>
+          <v-list-item>
+            <v-btn elevation="0" color="white" @click="registerDialog = true">
+              <v-icon class="mr-2">mdi-account-plus</v-icon>
+              Register
+            </v-btn>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item>
+            <v-btn elevation="0" color="white" @click="logout">
+              <v-icon class="mr-2">mdi-logout-variant</v-icon>
+              Log Out
+            </v-btn>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-menu offset-y left>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
@@ -45,35 +79,9 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-menu offset-y left>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
-            <v-icon>mdi-account</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item>
-            <v-btn elevation="0" color="white">
-              <v-icon class="mr-2">mdi-login-variant</v-icon>
-              Log In
-            </v-btn>
-          </v-list-item>
-          <v-list-item>
-            <v-btn elevation="0" color="white">
-              <v-icon class="mr-2">mdi-account-plus</v-icon>
-              Register
-            </v-btn>
-          </v-list-item>
-          <v-divider></v-divider>
-          <v-list-item>
-            <v-btn elevation="0" color="white">
-              <v-icon class="mr-2">mdi-logout-variant</v-icon>
-              Log Out
-            </v-btn>
-          </v-list-item>
-        </v-list>
-      </v-menu>
     </v-app-bar>
+    <Register v-if="registerDialog" />
+    <Login v-if="loginDialog" />
     <v-main>
       <v-navigation-drawer
         v-if="$vuetify.breakpoint.xs"
@@ -104,21 +112,31 @@
       </v-navigation-drawer>
       <router-view style="z-index: 1" />
     </v-main>
-    <!--
-    <div id="bg">
-      <img src="@/assets/bg/bg(3).jpg">
-    </div>-->
   </v-app>
 </template>
 
 <script>
+import Register from './components/user/Register.vue'
+import Login from './components/user/Login.vue'
 export default {
+  components: {
+    Register,
+    Login,
+  },
   name: 'App',
   data() {
     return {
       lang: 'tr',
       drawer: false,
+      registerDialog: false,
+      loginDialog: false,
     }
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('user/logout')
+      this.$router.push({ path: '/' })
+    },
   },
 }
 </script>

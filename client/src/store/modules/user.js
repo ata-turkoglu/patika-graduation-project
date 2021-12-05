@@ -14,7 +14,7 @@ export default {
       state.user = payload
       setTimeout(() => {
         state.authenticated = true
-      }, 1500)
+      }, 1000)
     },
     userLogout(state) {
       state.user = null
@@ -34,7 +34,7 @@ export default {
               token,
               process.env.VUE_APP_SECRET_KEY,
             )
-            console.log(responseToken)
+            window.localStorage.setItem('expires_token', responseToken.exp)
             commit('setUser', responseToken.user)
           } catch (error) {
             console.log(error)
@@ -43,6 +43,7 @@ export default {
         .catch((err) => {
           console.log(err)
           state.authError = true
+          state.authenticated = true
         })
     },
 
@@ -58,7 +59,7 @@ export default {
               token,
               process.env.VUE_APP_SECRET_KEY,
             )
-            console.log(responseToken)
+            window.localStorage.setItem('expires_token', responseToken.exp)
             commit('setUser', responseToken.user)
           } catch (error) {
             console.log(error)
@@ -67,6 +68,7 @@ export default {
         .catch((error) => {
           console.log(error)
           state.authError = true
+          state.authenticated = true
         })
     },
 

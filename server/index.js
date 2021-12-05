@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 
 const user = require('./router/user')
+const dashboard = require('./router/dashboard')
 
 dotenv.config()
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 
 app.use('/user',user)
+app.use('/dashboard',dashboard)
 
 mongoose.connect(
   process.env.MONGODB_DATABASE,

@@ -32,7 +32,7 @@
       <v-menu offset-y left>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on" :width="$store.state.user.user ? 100 : ''">
-            <span v-if="$store.state.user.user" class="mr-6">
+            <span v-if="$store.state.user.user">
               {{ $store.state.user.user.username }}
             </span>
             <v-icon v-else>mdi-account</v-icon>
@@ -62,7 +62,7 @@
       </v-menu>
       <v-menu offset-y left>
         <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
+          <v-btn icon v-on="on" class="ml-6">
             <span>{{ lang }}</span>
           </v-btn>
         </template>
@@ -130,6 +130,15 @@ export default {
       drawer: false,
       registerDialog: false,
       loginDialog: false,
+    }
+  },
+  beforeCreate() {
+    let expiresToken = window.localStorage.getItem('expires_token')
+    if (expiresToken < Date.now()) {
+      this.$store.state.user.authenticated = true
+      this.$store.state.user.user = JSON.parse(
+        window.localStorage.getItem('user'),
+      )
     }
   },
   methods: {

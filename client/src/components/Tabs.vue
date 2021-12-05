@@ -22,9 +22,9 @@
           loading-text="Loading... Please wait"
         >
           <!--eslint-disable-next-line-->
-          <template v-slot:item.special="{ item }">
+          <template v-slot:item.privileged="{ item }">
             <v-simple-checkbox
-              v-model="item.special"
+              v-model="item.privileged"
               disabled
             ></v-simple-checkbox>
           </template>
@@ -149,6 +149,19 @@
               </v-row>
             </v-container>
           </template>
+          <!--eslint-disable-next-line-->
+          <template v-slot:body.append>
+            <v-btn
+              dense
+              text
+              color="blue-grey lighten-1"
+              small
+              class="my-3"
+              @click="addNewRow, (addDialog = true)"
+            >
+              Add New Row
+            </v-btn>
+          </template>
         </v-data-table>
       </v-tab-item>
       <v-tab-item>
@@ -192,8 +205,29 @@
             </v-col>
           </v-row>
           <v-row align-content="center" justify="center" class="mt-6">
-            <v-btn class="mx-2">Cancel</v-btn>
+            <v-btn class="mx-2" @click="editDialog = false">Cancel</v-btn>
             <v-btn class="mx-2">Save</v-btn>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-if="addDialog" v-model="addDialog" width="75%">
+      <v-card>
+        <v-container fluid class="py-6 px-6">
+          <v-row class="my-2">
+            <v-col v-for="(item, index) in factoryListHeaders" :key="index">
+              <v-text-field
+                :label="item.text"
+                filled
+                dense
+                rounded
+                v-model="newRow[item.value]"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row align-content="center" justify="center" class="mt-6">
+            <v-btn class="mx-2" @click="addDialog = false">Cancel</v-btn>
+            <v-btn class="mx-2" @click="addNewRow">Save</v-btn>
           </v-row>
         </v-container>
       </v-card>
@@ -209,128 +243,8 @@ export default {
       itemsPerPage: 5,
       items: ['Factory List', 'Factory Info'],
       factoryList: {
-        headers: [
-          { text: 'Name', value: 'name' },
-          { text: 'Start', value: 'start' },
-          { text: 'Expiration', value: 'expiration' },
-          { text: 'Employees', value: 'employees' },
-          { text: 'Special', value: 'special' },
-          { text: 'Actions', value: 'actions', sortable: false },
-        ],
-        items: [
-          {
-            id: '1',
-            name: 'Pomza Export',
-            start: '21.12.2021',
-            expiration: '21.12.2025',
-            employees: 140,
-            special: false,
-          },
-          {
-            id: '2',
-            name: 'Etiper',
-            start: '11.09.2011',
-            expiration: '25.12.2021',
-            employees: 35,
-            special: false,
-          },
-          {
-            id: '3',
-            name: 'Eile Pomex',
-            start: '01.04.2018',
-            expiration: '01.04.2026',
-            employees: 53,
-            special: false,
-          },
-          {
-            id: '4',
-            name: 'Persan',
-            start: '18.07.2011',
-            expiration: '11.05.2024',
-            employees: 46,
-            special: false,
-          },
-          {
-            id: '5',
-            name: 'Pomex Garnet',
-            start: '13.09.2020',
-            expiration: '15.11.2028',
-            employees: 24,
-            special: true,
-          },
-          {
-            id: '6',
-            name: 'Eile Pomex',
-            start: '01.04.2018',
-            expiration: '01.04.2026',
-            employees: 53,
-            special: false,
-          },
-          {
-            id: '7',
-            name: 'Persan',
-            start: '18.07.2011',
-            expiration: '11.05.2024',
-            employees: 46,
-            special: false,
-          },
-          {
-            id: '8',
-            name: 'Pomex Garnet',
-            start: '13.09.2020',
-            expiration: '15.11.2028',
-            employees: 24,
-            special: true,
-          },
-          {
-            id: '9',
-            name: 'Eile Pomex',
-            start: '01.04.2018',
-            expiration: '01.04.2026',
-            employees: 53,
-            special: false,
-          },
-          {
-            id: '10',
-            name: 'Persan',
-            start: '18.07.2011',
-            expiration: '11.05.2024',
-            employees: 46,
-            special: false,
-          },
-          {
-            id: '11',
-            name: 'Pomex Garnet',
-            start: '13.09.2020',
-            expiration: '15.11.2028',
-            employees: 24,
-            special: true,
-          },
-          {
-            id: '12',
-            name: 'Eile Pomex',
-            start: '01.04.2018',
-            expiration: '01.04.2026',
-            employees: 53,
-            special: false,
-          },
-          {
-            id: '13',
-            name: 'Persan',
-            start: '18.07.2011',
-            expiration: '11.05.2024',
-            employees: 46,
-            special: false,
-          },
-          {
-            id: '14',
-            name: 'Pomex Garnet',
-            start: '13.09.2020',
-            expiration: '15.11.2028',
-            employees: 24,
-            special: true,
-          },
-        ],
+        headers: [],
+        items: [],
       },
       factoryInfo: {
         headers: [
@@ -376,6 +290,8 @@ export default {
           },
         ],
       },
+      addDialog: false,
+      newRow: [],
       editDialog: false,
       editingItem: null,
       deleteDialog: false,
@@ -387,6 +303,10 @@ export default {
       addColumnIndex: null,
       deleteColumnDialog: false,
     }
+  },
+  created() {
+    this.setFactories(this.$store.state.datatable.factories)
+    console.log('tab headers', this.factoryList.headers)
   },
   computed: {
     factoryListHeaders() {
@@ -400,6 +320,23 @@ export default {
     },
   },
   methods: {
+    setFactories(data) {
+      this.factoryList.items = data
+      console.log('tab data', data)
+      let keys = Object.keys(data[0])
+      keys.forEach((key) => {
+        let obj = new Object({
+          text: key.charAt(0).toUpperCase() + key.slice(1),
+          value: key,
+        })
+        this.factoryList.headers.push(obj)
+      })
+      this.factoryList.headers.push({
+        text: 'Actions',
+        value: 'actions',
+        sortable: false,
+      })
+    },
     editItem(item) {
       this.editingItem = this.factoryList.items.find((el) => el.id == item.id)
       this.factoryListHeaders.forEach((el) => {
@@ -426,6 +363,9 @@ export default {
     deleteColumn(item) {
       let index = this.factoryList.headers.findIndex((el) => el.value == item)
       this.factoryList.headers.splice(index, 1)
+    },
+    addNewRow() {
+      console.log(this.newRow)
     },
   },
 }

@@ -81,6 +81,24 @@ export default {
       this.user = JSON.parse(window.localStorage.getItem('user'))
     }
   },
+  watch: {
+    '$store.state.user.authenticated': {
+      handler(val) {
+        if (val) {
+          this.$parent.$parent.loginDialog = false
+        }
+      },
+    },
+    '$store.state.user.authError': {
+      handler(val) {
+        if (val) {
+          setTimeout(() => {
+            this.$store.state.user.authError = false
+          }, 1500)
+        }
+      },
+    },
+  },
   methods: {
     login() {
       if (this.remember) {

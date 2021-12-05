@@ -39,7 +39,6 @@
           </v-row>
           <v-row>
             <v-checkbox label="Remember Me" v-model="remember"></v-checkbox>
-            {{ authenticated }}
           </v-row>
         </v-container>
       </v-card-text>
@@ -103,13 +102,13 @@ export default {
       },
     }
   },
-  mounted() {
+  created() {
     if (window.localStorage.getItem('user')) {
       this.user = JSON.parse(window.localStorage.getItem('user'))
     }
   },
   watch: {
-    authenticated: {
+    '$store.state.user.authenticated': {
       handler(val) {
         if (val) {
           console.log('auth', val)
@@ -117,7 +116,7 @@ export default {
         }
       },
     },
-    authError: {
+    '$store.state.user.authError': {
       handler(val) {
         if (val) {
           setTimeout(() => {

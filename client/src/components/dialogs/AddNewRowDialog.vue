@@ -37,12 +37,14 @@
         <v-row align-content="center" justify="center" class="mt-6">
           <v-btn
             class="mx-2"
+            text
             @click="$store.state.dialogs.addNewRowDialogState = false"
             >Cancel</v-btn
           >
-          <v-btn class="mx-2" @click="addNewRow">Save</v-btn>
+          <v-btn class="mx-2" text @click="addNewRow">Save</v-btn>
         </v-row>
       </v-container>
+      {{ newRow.start_date }}{{ newRow.finish_date }}
     </v-card>
   </v-dialog>
 </template>
@@ -57,7 +59,8 @@ export default {
   },
   methods: {
     addNewRow() {
-      console.log(this.newRow)
+      this.$store.dispatch('datatable/addNewRowToFactories', this.newRow)
+      this.$store.state.dialogs.addNewRowDialogState = false
     },
   },
 }

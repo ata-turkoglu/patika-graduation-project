@@ -48,11 +48,8 @@ export default {
     }
   },
   methods: {
-    deleteColumn(item) {
-      let index = this.$parent.$parent.factoryList.headers.findIndex(
-        (el) => el.value == item,
-      )
-      this.$parent.$parent.factoryList.headers.splice(index, 1)
+    deleteColumn(column) {
+      this.$store.dispatch('datatable/deleteColumnFromFactories', column)
       this.$store.state.dialogs.deleteColumnDialogState = false
     },
   },

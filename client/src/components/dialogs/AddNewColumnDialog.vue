@@ -9,10 +9,10 @@
         <v-text-field
           label="Column Name"
           outlined
-          v-model="newColumn"
+          v-model="newColumn.name"
         ></v-text-field>
         <v-autocomplete
-          v-model="dataType"
+          v-model="newColumn.type"
           :items="dataTypes"
           outlined
           label="Select type of datas"
@@ -25,7 +25,7 @@
           thumb-label="always"
           ticks
           class="mt-4"
-          v-model="addColumnIndex"
+          v-model="newColumn.index"
         ></v-slider>
       </v-card-text>
       <v-card-actions justify-end>
@@ -43,7 +43,7 @@
               color="blue darken-2"
               small
               text
-              @click="addColumn(newColumn, addColumnIndex, dataType)"
+              @click="addColumn(newColumn)"
             >
               Add
             </v-btn>
@@ -59,17 +59,21 @@ export default {
   props: ['maxIndex'],
   data() {
     return {
-      newColumn: null,
-      dataType: null,
+      newColumn: {
+        name: null,
+        index: null,
+        type: null,
+      },
       dataTypes: ['Number', 'Boolean', 'Text'],
-      addColumnIndex: null,
     }
   },
   methods: {
-    addColumn(item, index, type) {
-      let itemtext = item.charAt(0).toUpperCase() + item.slice(1)
-      item = { text: itemtext, value: item.toLowerCase(), type: type }
-      this.$parent.$parent.factoryList.headers.splice(index, 0, item)
+    addColumn(column) {
+      let item = {
+        name: column.name.toLowerCase(),
+        type: column.type,
+      }
+      this.$store.dispatch('datatable/addNewColumnToFactories', item)
       this.$store.state.dialogs.addNewColumnDialogState = false
     },
   },

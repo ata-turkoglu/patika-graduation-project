@@ -9,7 +9,7 @@
               :label="item.text"
               outlined
               type="date"
-              v-model="data[item.value]"
+              v-model="row[item.value]"
             ></v-text-field>
             <v-text-field
               v-else-if="item.type == 'boolean'"
@@ -20,7 +20,7 @@
               <!--eslint-disable-next-line-->
               <template v-slot:prepend-inner>
                 <v-simple-checkbox
-                  v-model="data[item.value]"
+                  v-model="row[item.value]"
                 ></v-simple-checkbox>
               </template>
             </v-text-field>
@@ -29,17 +29,18 @@
               :label="item.text"
               outlined
               ripple="false"
-              v-model="data[item.value]"
+              v-model="row[item.value]"
             ></v-text-field>
           </v-col>
         </v-row>
         <v-row align-content="center" justify="center" class="mt-6">
           <v-btn
             class="mx-2"
+            text
             @click="$store.state.dialogs.editRowDialogState = false"
             >Cancel</v-btn
           >
-          <v-btn class="mx-2">Save</v-btn>
+          <v-btn class="mx-2" text @click="editRow">Save</v-btn>
         </v-row>
       </v-container>
     </v-card>
@@ -49,6 +50,20 @@
 <script>
 export default {
   props: ['headers', 'data'],
+  data() {
+    return {
+      row: null,
+    }
+  },
+  created() {
+    this.row = this.data
+  },
+  methods: {
+    editRow() {
+      this.$store.dispatch('datatable/editRowFromFactories', this.row)
+      this.$store.state.dialogs.editRowDialogState = false
+    },
+  },
 }
 </script>
 

@@ -61,6 +61,29 @@ router.delete("/factories", async(req,res)=>{
   }
 })
 
+//Update row
+router.patch("/factories/updaterow",async(req,res)=>{
+  let keys = Object.keys(req.body)
+  let values = Object.values(req.body)
+  let query=""
+
+  for (let i=0; i<keys.length; i++){
+    if(i==keys.length-1){
+      query+=`${keys[i]}=$${i+1}`
+    }else{
+      query+=`${keys[i]}=$${i+1}, `
+    }
+  }
+
+  try {
+    let result = await client.query(`UPDATE factories SET ${query} WHERE id=$1 RETURNING *`, values)
+    res.status(200).json(result)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({error, message:'could not update row from factories'})
+  }  
+})
+
 //Add new column
 router.post("/factories/addnewcolumn",async(req,res)=>{
   let column = req.body

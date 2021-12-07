@@ -37,11 +37,11 @@ export default {
             window.localStorage.setItem('expires_token', responseToken.exp)
             commit('setUser', responseToken.user)
           } catch (error) {
-            console.log(error)
+            console.error(error)
           }
         })
         .catch((err) => {
-          console.log(err)
+          console.error(err)
           state.authError = true
           state.authenticated = true
         })
@@ -62,11 +62,11 @@ export default {
             window.localStorage.setItem('expires_token', responseToken.exp)
             commit('setUser', responseToken.user)
           } catch (error) {
-            console.log(error)
+            console.error(error)
           }
         })
         .catch((error) => {
-          console.log(error)
+          console.error(error)
           state.authError = true
           state.authenticated = true
         })

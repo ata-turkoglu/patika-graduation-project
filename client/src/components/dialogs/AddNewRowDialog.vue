@@ -44,7 +44,6 @@
           <v-btn class="mx-2" text @click="addNewRow">Save</v-btn>
         </v-row>
       </v-container>
-      {{ newRow.start_date }}{{ newRow.finish_date }}
     </v-card>
   </v-dialog>
 </template>

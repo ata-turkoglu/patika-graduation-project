@@ -1,5 +1,18 @@
 import axios from 'axios'
 
+const setDateFormat = (columns, rowData) => {
+  let dates = columns
+    .filter((col) => col.format_type == 'date')
+    .map((item) => item.attname)
+  rowData.forEach((data) => {
+    Object.keys(data).forEach((item) => {
+      if (dates.includes(item) && data[item] != null) {
+        data[item] = data[item].split('T')[0]
+      }
+    })
+  })
+}
+
 export default {
   namespaced: true,
   state: {
@@ -17,35 +30,33 @@ export default {
     addNewRow(state, row) {
       state.factories.rows.push(row.data.rows[0])
     },
-    addNewColumn(data) {
-      console.log('column', data)
-      /*
-      state.factories.columns.splice(data.index, 0, {
-        attname: data.item.value,
-        format_type: data.item.type,
-      })
-      */
+    editRow(state, row) {
+      let index = state.factories.rows.findIndex((item) => item.id == row.id)
+      state.factories.rows.splice(index, 1, row)
     },
-    deleteColumn() {},
+    addNewColumn(state, data) {
+      let item = {
+        attname: data.name,
+        format_type: data.type,
+      }
+      state.factories.columns.push(item)
+    },
+    deleteColumn(state, column) {
+      let index = state.factories.columns.findIndex(
+        (item) => item.attname == column,
+      )
+      state.factories.columns.splice(index, 1)
+    },
   },
   actions: {
     async getFactories({ commit, state }) {
       await axios
         .get('http://localhost:8088/dashboard/factories')
         .then((res) => {
+          //store columns' data
           state.columns = res.data.columns
-
           //timestamp date datas to date
-          let dates = res.data.columns
-            .filter((col) => col.format_type == 'date')
-            .map((item) => item.attname)
-          res.data.rows.forEach((data) => {
-            Object.keys(data).forEach((item) => {
-              if (dates.includes(item)) {
-                data[item] = data[item].split('T')[0]
-              }
-            })
-          })
+          setDateFormat(state.columns, res.data.rows)
           commit('setFactories', res.data)
         })
         .catch((err) => {
@@ -57,23 +68,15 @@ export default {
         .post('http://localhost:8088/dashboard/factories', { ...row })
         .then((res) => {
           //timestamp date datas to date
-          let dates = state.columns
-            .filter((col) => col.format_type == 'date')
-            .map((item) => item.attname)
-          res.data.rows.forEach((data) => {
-            Object.keys(data).forEach((item) => {
-              if (dates.includes(item)) {
-                data[item] = data[item].split('T')[0]
-              }
-            })
-          })
-
+          setDateFormat(state.columns, res.data.rows)
           commit('addNewRow', res)
+          console.log(res.status + ' new row added successfully')
         })
         .catch((err) => {
           console.error(err)
         })
     },
+
     async deleteRowFromFactories({ commit }, id) {
       await axios
         .delete('http://localhost:8088/dashboard/factories', {
@@ -81,6 +84,21 @@ export default {
         })
         .then((res) => {
           commit('deleteRow', res.data)
+          console.log(res.status + ' row deleted successfully')
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+
+    async editRowFromFactories({ commit, state }, row) {
+      await axios
+        .patch('http://localhost:8088/dashboard/factories/updaterow', row)
+        .then((res) => {
+          //timestamp date datas to date
+          setDateFormat(state.columns, res.data.rows)
+          commit('editRow', res.data.rows[0])
+          console.log(res.status + ' row updated successfully')
         })
         .catch((err) => {
           console.error(err)
@@ -91,7 +109,8 @@ export default {
       await axios
         .post('http://localhost:8088/dashboard/factories/addnewcolumn', column)
         .then((res) => {
-          commit('addNewColumn', res.data)
+          commit('addNewColumn', column)
+          console.log(res.status + ' new column added successfully')
         })
         .catch((err) => {
           console.error(err)
@@ -104,8 +123,8 @@ export default {
           data: { column },
         })
         .then((res) => {
-          console.log('deleteColumnFromFactories', res)
-          commit('deleteColumn', res.data)
+          commit('deleteColumn', column)
+          console.log(res.status + ' column deleted successfully')
         })
         .catch((err) => {
           console.error(err)

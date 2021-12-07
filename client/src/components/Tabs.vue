@@ -188,9 +188,16 @@ export default {
       editingItem: null,
     }
   },
+  watch: {
+    '$store.state.datatable.factories': {
+      handler(val) {
+        this.setFactories(val)
+      },
+      deep: true,
+    },
+  },
   created() {
     this.setFactories(this.$store.state.datatable.factories)
-    console.log('tab headers', this.factoryList.headers)
   },
   computed: {
     factoryListHeaders() {
@@ -205,8 +212,9 @@ export default {
   },
   methods: {
     setFactories(data) {
+      this.factoryList.headers = []
+      this.factoryList.items = []
       this.factoryList.items = data.rows
-      console.log('tab data', data)
       data.columns.forEach((col) => {
         let obj = new Object({
           text: col.attname.charAt(0).toUpperCase() + col.attname.slice(1),
@@ -233,8 +241,7 @@ export default {
     deleteItem(item) {
       let conf = confirm('Are You Sure to Delete Row?')
       if (conf) {
-        let index = this.factoryList.items.findIndex((el) => el.id == item.id)
-        this.factoryList.items.splice(index, 1)
+        this.$store.dispatch('datatable/deleteRowFromFactories', item.id)
       }
     },
   },

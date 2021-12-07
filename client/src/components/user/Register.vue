@@ -111,7 +111,6 @@ export default {
     '$store.state.user.authenticated': {
       handler(val) {
         if (val) {
-          console.log('auth', val)
           this.$parent.$parent.registerDialog = false
         }
       },

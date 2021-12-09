@@ -110,7 +110,7 @@
           </v-list-item-group>
         </v-list>
       </v-navigation-drawer>
-      <router-view style="z-index: 1" />
+      <router-view />
     </v-main>
   </v-app>
 </template>
@@ -158,7 +158,7 @@ export default {
   background-position: center;
   background-size: cover;
 }
-#app:after {
+#app:before {
   content: '';
   position: fixed;
   top: 0;
@@ -167,6 +167,7 @@ export default {
   right: 0;
   background: rgba(0, 0, 0, 0.55);
   pointer-events: none;
+  z-index: 0;
 }
 ::-webkit-scrollbar {
   display: none;
@@ -177,7 +178,7 @@ export default {
   top: 0;
   height: 100%;
   width: 100%;
-  z-index: 0;
+  z-index: -1;
 }
 img {
   object-fit: cover;
@@ -192,6 +193,6 @@ img {
   color: white;
 }
 .v-list-item--active {
-  background-color: grey;
+  background-color: white;
 }
 </style>

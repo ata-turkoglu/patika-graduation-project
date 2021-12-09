@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 
 const user = require('./router/user')
-const dashboard = require('./router/dashboard')
+const dataTable = require('./router/dataTable')
 
 dotenv.config()
 const app = express();
@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 
 app.use('/user',user)
-app.use('/dashboard',dashboard)
+app.use("/dashboard/datatable",dataTable)
 
 mongoose.connect(
   process.env.MONGODB_DATABASE,

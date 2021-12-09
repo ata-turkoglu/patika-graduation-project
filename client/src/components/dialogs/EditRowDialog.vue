@@ -111,6 +111,12 @@ export default {
   methods: {
     async editRow() {
       let newRow = await this.correctRange(this.headers, this.row)
+      let cols = await this.headers.map((col) => col.value)
+      Object.keys(newRow).forEach((item) => {
+        if (!cols.includes(item) && item != 'id') {
+          delete newRow[item]
+        }
+      })
       await this.$store.dispatch('datatable/editRow', {
         tableName: String(this.tableName).toLowerCase(),
         row: newRow,

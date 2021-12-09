@@ -13,63 +13,85 @@ const setDateFormat = (columns, rowData) => {
   })
 }
 
+const setDateRangeFormat = (columns, rowData) => {
+  let dateranges = columns
+    .filter((col) => col.format_type == 'daterange')
+    .map((item) => item.attname)
+  rowData.forEach((data) => {
+    Object.keys(data).forEach((item) => {
+      if (dateranges.includes(item) && data[item] != null) {
+        let range = data[item].split(',')
+        data[item] = [range[0].slice(1), range[1].slice(0, -1)]
+      }
+    })
+  })
+}
+
 export default {
   namespaced: true,
   state: {
+    departments: null,
     factories: null,
     columns: null,
   },
   mutations: {
-    setFactories(state, data) {
-      state.factories = data
+    setDepartments(state, [table, data]) {
+      state[table] = data
     },
-    deleteRow(state, id) {
-      let index = state.factories.rows.findIndex((item) => item.id == id)
-      state.factories.rows.splice(index, 1)
+    deleteRow(state, [table, id]) {
+      let index = state[table].rows.findIndex((item) => item.id == id)
+      state[table].rows.splice(index, 1)
     },
-    addNewRow(state, row) {
-      state.factories.rows.push(row.data.rows[0])
+    addNewRow(state, [table, row]) {
+      state[table].rows.push(row.data.rows[0])
     },
-    editRow(state, row) {
-      let index = state.factories.rows.findIndex((item) => item.id == row.id)
-      state.factories.rows.splice(index, 1, row)
+    editRow(state, [table, row]) {
+      let index = state[table].rows.findIndex((item) => item.id == row.id)
+      state[table].rows.splice(index, 1, row)
     },
-    addNewColumn(state, data) {
+    addNewColumn(state, [table, column]) {
       let item = {
-        attname: data.name,
-        format_type: data.type,
+        attname: column.name,
+        format_type: column.type,
       }
-      state.factories.columns.push(item)
+      state[table].columns.push(item)
     },
-    deleteColumn(state, column) {
-      let index = state.factories.columns.findIndex(
+    deleteColumn(state, [table, column]) {
+      let index = state[table].columns.findIndex(
         (item) => item.attname == column,
       )
-      state.factories.columns.splice(index, 1)
+      state[table].columns.splice(index, 1)
     },
   },
   actions: {
-    async getFactories({ commit, state }) {
+    async getAll({ commit }, data) {
       await axios
-        .get('http://localhost:8088/dashboard/factories')
+        .get('http://localhost:8088/dashboard/datatable/getall', {
+          params: {
+            tablename: data.tableName,
+          },
+        })
         .then((res) => {
-          //store columns' data
-          state.columns = res.data.columns
+          console.log('-data-', res)
           //timestamp date datas to date
-          setDateFormat(state.columns, res.data.rows)
-          commit('setFactories', res.data)
+          setDateFormat(res.data.columns, res.data.rows)
+          //set daterange to array
+          setDateRangeFormat(res.data.columns, res.data.rows)
+          commit('setDepartments', [data.tableName, res.data])
         })
         .catch((err) => {
           console.error(err)
         })
     },
-    async addNewRowToFactories({ commit, state }, row) {
+    async addNewRow({ commit, state }, data) {
       await axios
-        .post('http://localhost:8088/dashboard/factories', { ...row })
+        .post('http://localhost:8088/dashboard/datatable/addnewrow', data)
         .then((res) => {
           //timestamp date datas to date
-          setDateFormat(state.columns, res.data.rows)
-          commit('addNewRow', res)
+          setDateFormat(state[data.tableName].columns, res.data.rows)
+          //set daterange to array
+          setDateRangeFormat(state[data.tableName].columns, res.data.rows)
+          commit('addNewRow', [data.tableName, res])
           console.log(res.status + ' new row added successfully')
         })
         .catch((err) => {
@@ -77,13 +99,13 @@ export default {
         })
     },
 
-    async deleteRowFromFactories({ commit }, id) {
+    async deleteRow({ commit }, data) {
       await axios
-        .delete('http://localhost:8088/dashboard/factories', {
-          data: { id },
+        .delete('http://localhost:8088/dashboard/datatable/deleterow', {
+          data: { tableName: data.tableName, id: data.id },
         })
         .then((res) => {
-          commit('deleteRow', res.data)
+          commit('deleteRow', [data.tableName, res.data])
           console.log(res.status + ' row deleted successfully')
         })
         .catch((err) => {
@@ -91,13 +113,15 @@ export default {
         })
     },
 
-    async editRowFromFactories({ commit, state }, row) {
+    async editRow({ commit, state }, data) {
       await axios
-        .patch('http://localhost:8088/dashboard/factories/updaterow', row)
+        .patch('http://localhost:8088/dashboard/datatable/updaterow', data)
         .then((res) => {
           //timestamp date datas to date
-          setDateFormat(state.columns, res.data.rows)
-          commit('editRow', res.data.rows[0])
+          setDateFormat(state[data.tableName].columns, res.data.rows)
+          //set daterange to array
+          setDateRangeFormat(state[data.tableName].columns, res.data.rows)
+          commit('editRow', [data.tableName, res.data.rows[0]])
           console.log(res.status + ' row updated successfully')
         })
         .catch((err) => {
@@ -105,11 +129,11 @@ export default {
         })
     },
 
-    async addNewColumnToFactories({ commit }, column) {
+    async addNewColumn({ commit }, data) {
       await axios
-        .post('http://localhost:8088/dashboard/factories/addnewcolumn', column)
+        .post('http://localhost:8088/dashboard/datatable/addnewcolumn', data)
         .then((res) => {
-          commit('addNewColumn', column)
+          commit('addNewColumn', [data.tableName, data.column])
           console.log(res.status + ' new column added successfully')
         })
         .catch((err) => {
@@ -117,13 +141,13 @@ export default {
         })
     },
 
-    async deleteColumnFromFactories({ commit }, column) {
+    async deleteColumn({ commit }, data) {
       await axios
-        .delete('http://localhost:8088/dashboard/factories/deletecolumn', {
-          data: { column },
+        .delete('http://localhost:8088/dashboard/datatable/deletecolumn', {
+          data: { tableName: data.tableName, column: data.column },
         })
         .then((res) => {
-          commit('deleteColumn', column)
+          commit('deleteColumn', [data.tableName, data.column])
           console.log(res.status + ' column deleted successfully')
         })
         .catch((err) => {

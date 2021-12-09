@@ -1,7 +1,14 @@
 <template>
   <v-dialog
-    v-model="$store.state.dialogs.deleteColumnDialogState"
-    max-width="25%"
+    v-model="$parent.$parent.dialogs.deleteColumnDialogState"
+    :width="
+      $vuetify.breakpoint.lgAndUp
+        ? '75%'
+        : $vuetify.breakpoint.sm
+        ? '50%'
+        : '100%'
+    "
+    persistent
   >
     <v-card>
       <v-card-title>Delete Column</v-card-title>
@@ -20,7 +27,7 @@
               color="grey darken-2"
               small
               text
-              @click="$store.state.dialogs.deleteColumnDialogState = false"
+              @click="$parent.$parent.dialogs.deleteColumnDialogState = false"
             >
               Cancel
             </v-btn>
@@ -41,7 +48,7 @@
 
 <script>
 export default {
-  props: ['headers'],
+  props: ['tableName', 'headers'],
   data() {
     return {
       deletedColumn: null,
@@ -49,8 +56,11 @@ export default {
   },
   methods: {
     deleteColumn(column) {
-      this.$store.dispatch('datatable/deleteColumnFromFactories', column)
-      this.$store.state.dialogs.deleteColumnDialogState = false
+      this.$store.dispatch('datatable/deleteColumn', {
+        tableName: String(this.tableName).toLowerCase(),
+        column,
+      })
+      this.$parent.$parent.dialogs.deleteColumnDialogState = false
     },
   },
 }

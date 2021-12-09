@@ -1,7 +1,14 @@
 <template>
   <v-dialog
-    v-model="$store.state.dialogs.addNewColumnDialogState"
-    max-width="25%"
+    v-model="$parent.$parent.dialogs.addNewColumnDialogState"
+    :width="
+      $vuetify.breakpoint.lgAndUp
+        ? '75%'
+        : $vuetify.breakpoint.sm
+        ? '50%'
+        : '100%'
+    "
+    persistent
   >
     <v-card>
       <v-card-title>Add Column</v-card-title>
@@ -35,7 +42,7 @@
               color="grey darken-2"
               small
               text
-              @click="$store.state.dialogs.addNewColumnDialogState = false"
+              @click="$parent.$parent.dialogs.addNewColumnDialogState = false"
             >
               Cancel
             </v-btn>
@@ -56,7 +63,7 @@
 
 <script>
 export default {
-  props: ['maxIndex'],
+  props: ['tableName', 'maxIndex'],
   data() {
     return {
       newColumn: {
@@ -64,17 +71,30 @@ export default {
         index: null,
         type: null,
       },
-      dataTypes: ['Number', 'Boolean', 'Text'],
+      dataTypes: [
+        'Boolean',
+        'Char',
+        'Date',
+        'Int',
+        'Number',
+        'SmallInt',
+        'Text',
+        'Time',
+        'Varchar',
+      ],
     }
   },
   methods: {
     addColumn(column) {
       let item = {
-        name: column.name.toLowerCase(),
-        type: column.type,
+        name: column.name,
+        type: String(column.type).toLowerCase(),
       }
-      this.$store.dispatch('datatable/addNewColumnToFactories', item)
-      this.$store.state.dialogs.addNewColumnDialogState = false
+      this.$store.dispatch('datatable/addNewColumn', {
+        tableName: String(this.tableName).toLowerCase(),
+        column: item,
+      })
+      this.$parent.$parent.dialogs.addNewColumnDialogState = false
     },
   },
 }

@@ -32,7 +32,6 @@ export default {
   state: {
     departments: null,
     factories: null,
-    columns: null,
   },
   mutations: {
     setDepartments(state, [table, data]) {

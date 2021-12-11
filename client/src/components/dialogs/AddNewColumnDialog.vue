@@ -13,38 +13,44 @@
     <v-card>
       <v-card-title>Add Column</v-card-title>
       <v-card-text>
-        <v-text-field
-          label="Column Name"
-          outlined
-          v-model="newColumn.name"
-        ></v-text-field>
-        <v-autocomplete
-          v-model="newColumn.type"
-          :items="dataTypes"
-          outlined
-          label="Select type of datas"
-        ></v-autocomplete>
-        <v-expand-transition>
+        <v-form v-model="valid">
           <v-text-field
-            v-if="
-              newColumn.type == 'Char' || newColumn.type == 'Character Varying'
-            "
-            label="Length"
-            type="number"
+            label="Column Name"
             outlined
-            v-model="dataLength"
+            :rules="[required]"
+            v-model="newColumn.name"
           ></v-text-field>
-        </v-expand-transition>
-        <v-slider
-          label="Select Column Index"
-          step="1"
-          min="1"
-          :max="maxIndex"
-          thumb-label="always"
-          ticks
-          class="mt-4"
-          v-model="newColumn.index"
-        ></v-slider>
+          <v-autocomplete
+            v-model="newColumn.type"
+            :items="dataTypes"
+            outlined
+            :rules="[required]"
+            label="Select type of datas"
+          ></v-autocomplete>
+          <v-expand-transition>
+            <v-text-field
+              v-if="
+                newColumn.type == 'Char' ||
+                newColumn.type == 'Character Varying'
+              "
+              label="Length"
+              type="number"
+              outlined
+              :rules="[required]"
+              v-model="dataLength"
+            ></v-text-field>
+          </v-expand-transition>
+          <v-slider
+            label="Select Column Index"
+            step="1"
+            min="1"
+            :max="maxIndex"
+            thumb-label="always"
+            ticks
+            class="mt-4"
+            v-model="newColumn.index"
+          ></v-slider>
+        </v-form>
       </v-card-text>
       <v-card-actions justify-end>
         <v-container>
@@ -61,6 +67,7 @@
               color="blue darken-2"
               small
               text
+              :disabled="!valid"
               @click="addColumn(newColumn)"
             >
               Add
@@ -96,6 +103,8 @@ export default {
         'Text',
       ],
       dataLength: null,
+      valid: true,
+      required: (value) => !!value || 'Required',
     }
   },
   methods: {

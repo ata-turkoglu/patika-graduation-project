@@ -10,6 +10,7 @@
       loading="false"
       mobile-breakpoint="960"
       loading-text="Loading... Please wait"
+      class="capitalize"
     >
       <template
         v-if="$vuetify.breakpoint.mdAndUp"
@@ -43,7 +44,15 @@
               <v-icon small class="mr-2" @click="editItem(item)">
                 mdi-pencil
               </v-icon>
-              <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+              <v-icon
+                small
+                @click="
+                  ;(dialogs.deleteRowDialogState = true),
+                    (idForDelete = item.id)
+                "
+              >
+                mdi-delete
+              </v-icon>
             </div>
             <span v-else>{{ item[col.value] }}</span>
           </td>
@@ -54,7 +63,14 @@
         v-slot:item.actions="{ item }"
       >
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+        <v-icon
+          small
+          @click="
+            ;(dialogs.deleteRowDialogState = true), (idForDelete = item.id)
+          "
+        >
+          mdi-delete
+        </v-icon>
       </template>
       <template v-slot:top>
         <v-container>
@@ -103,6 +119,11 @@
       :headers="tableDataColumns"
       :data="edittingRow"
     />
+    <DeleteRowDialog
+      v-if="dialogs.deleteRowDialogState"
+      :tableName="tableName"
+      :id="idForDelete"
+    />
     <AddNewColumnDialog
       v-if="dialogs.addNewColumnDialogState"
       :tableName="tableName"
@@ -120,6 +141,7 @@
 <script>
 import AddNewRowDialog from '../dialogs/AddNewRowDialog.vue'
 import EditRowDialog from '../dialogs/EditRowDialog.vue'
+import DeleteRowDialog from '../dialogs/DeleteRowDialog.vue'
 import AddNewColumnDialog from '../dialogs/AddNewColumnDialog.vue'
 import DeleteColumnDialog from '../dialogs/DeleteColumnDialog.vue'
 export default {
@@ -127,6 +149,7 @@ export default {
   components: {
     AddNewRowDialog,
     EditRowDialog,
+    DeleteRowDialog,
     AddNewColumnDialog,
     DeleteColumnDialog,
   },
@@ -141,10 +164,12 @@ export default {
       dialogs: {
         addNewRowDialogState: false,
         editRowDialogState: false,
+        deleteRowDialogState: false,
         addNewColumnDialogState: false,
         deleteColumnDialogState: false,
       },
       edittingRow: null,
+      idForDelete: null,
     }
   },
   created() {
@@ -178,7 +203,8 @@ export default {
       this.tableData.rows = data.rows
       data.columns.forEach((col) => {
         let obj = new Object({
-          text: col.attname.charAt(0).toUpperCase() + col.attname.slice(1),
+          //text: col.attname.charAt(0).toUpperCase() + col.attname.slice(1),
+          text: col.attname.replaceAll('_', ' '),
           value: col.attname,
           type: col.format_type,
         })
@@ -200,15 +226,6 @@ export default {
       })
       this.dialogs.editRowDialogState = true
     },
-    deleteItem(item) {
-      let conf = confirm('Are You Sure to Delete Row?')
-      if (conf) {
-        this.$store.dispatch('datatable/deleteRow', {
-          tableName: String(this.tableName).toLowerCase(),
-          id: item.id,
-        })
-      }
-    },
   },
 }
 </script>
@@ -217,5 +234,8 @@ export default {
 .title-bg {
   background-color: #78909c !important;
   color: white;
+}
+.capitalize {
+  text-transform: capitalize;
 }
 </style>

@@ -13,12 +13,15 @@
     <v-card>
       <v-card-title>Delete Column</v-card-title>
       <v-container>
-        <v-select
-          label="Select a Column"
-          outlined
-          :items="headers"
-          v-model="deletedColumn"
-        ></v-select>
+        <v-form v-model="valid">
+          <v-select
+            label="Select a Column"
+            outlined
+            :rules="[required]"
+            :items="headers"
+            v-model="deletedColumn"
+          ></v-select>
+        </v-form>
       </v-container>
       <v-card-actions justify-end>
         <v-container>
@@ -35,6 +38,7 @@
               color="red darken-2"
               small
               text
+              :disabled="!valid"
               @click="deleteColumn(deletedColumn)"
             >
               Delete
@@ -52,6 +56,8 @@ export default {
   data() {
     return {
       deletedColumn: null,
+      valid: true,
+      required: (value) => !!value || 'Required',
     }
   },
   methods: {

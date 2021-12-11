@@ -3,23 +3,23 @@
     v-model="$parent.$parent.dialogs.deleteColumnDialogState"
     :width="
       $vuetify.breakpoint.lgAndUp
-        ? '75%'
-        : $vuetify.breakpoint.sm
+        ? '25%'
+        : $vuetify.breakpoint.smAndDown
         ? '50%'
-        : '100%'
+        : '25%'
     "
     persistent
   >
     <v-card>
       <v-card-title>Delete Column</v-card-title>
-      <v-card-text>
+      <v-container>
         <v-select
           label="Select a Column"
           outlined
           :items="headers"
           v-model="deletedColumn"
         ></v-select>
-      </v-card-text>
+      </v-container>
       <v-card-actions justify-end>
         <v-container>
           <v-row justify="end">

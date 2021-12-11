@@ -3,10 +3,10 @@
     v-model="$parent.$parent.dialogs.addNewColumnDialogState"
     :width="
       $vuetify.breakpoint.lgAndUp
+        ? '25%'
+        : $vuetify.breakpoint.smAndDown
         ? '75%'
-        : $vuetify.breakpoint.sm
-        ? '50%'
-        : '100%'
+        : '50%'
     "
     persistent
   >
@@ -24,6 +24,17 @@
           outlined
           label="Select type of datas"
         ></v-autocomplete>
+        <v-expand-transition>
+          <v-text-field
+            v-if="
+              newColumn.type == 'Char' || newColumn.type == 'Character Varying'
+            "
+            label="Length"
+            type="number"
+            outlined
+            v-model="dataLength"
+          ></v-text-field>
+        </v-expand-transition>
         <v-slider
           label="Select Column Index"
           step="1"
@@ -74,21 +85,32 @@ export default {
       dataTypes: [
         'Boolean',
         'Char',
+        'Character Varying',
+        'CIDR',
         'Date',
+        'Date Range',
         'Int',
-        'Number',
+        'MACaddr',
+        'Numeric',
         'SmallInt',
         'Text',
-        'Time',
-        'Varchar',
       ],
+      dataLength: null,
     }
   },
   methods: {
     addColumn(column) {
-      let item = {
-        name: column.name,
-        type: String(column.type).toLowerCase(),
+      let item = {}
+      if (column.type == 'Char' || column.type == 'Character Varying') {
+        item = {
+          name: column.name.replaceAll(' ', '_'),
+          type: String(column.type).toLowerCase() + `(${this.dataLength})`,
+        }
+      } else {
+        item = {
+          name: column.name.replaceAll(' ', '_'),
+          type: String(column.type).toLowerCase(),
+        }
       }
       this.$store.dispatch('datatable/addNewColumn', {
         tableName: String(this.tableName).toLowerCase(),

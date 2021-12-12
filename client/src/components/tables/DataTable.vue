@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="75%" class="mt-16 mx-auto">
+  <v-card max-width="75%" class="mt-16 mx-auto" :id="tableName + '-card'">
     <v-card-title class="title-bg">{{ tableName }}</v-card-title>
     <!--eslint-disable    -->
     <v-data-table
@@ -54,7 +54,11 @@
                 mdi-delete
               </v-icon>
             </div>
-            <span v-else>{{ item[col.value] }}</span>
+            <span v-else
+              >{{ item[col.value] }}
+              <small class="lowercase" v-if="col.text == 'usage'"> kw</small>
+              <small class="lowercase" v-if="col.text == 'fee'"> TL</small>
+            </span>
           </td>
         </tr>
       </template>
@@ -168,12 +172,45 @@ export default {
         addNewColumnDialogState: false,
         deleteColumnDialogState: false,
       },
+      drag: false,
+      dragSelected: null,
+      itemIndex: null,
+      targetIndex: null,
+      dragList: [],
       edittingRow: null,
       idForDelete: null,
     }
   },
   created() {
     this.setTableData(this.data)
+  },
+  mounted() {
+    document
+      .getElementById(`${this.tableName}-card`)
+      .addEventListener('dragenter', this.moveHeader)
+    document
+      .getElementById(`${this.tableName}-card`)
+      .addEventListener('dragleave', this.dragLeave)
+    document
+      .getElementById(`${this.tableName}-card`)
+      .addEventListener('dragstart', this.dragStart)
+    document
+      .getElementById(`${this.tableName}-card`)
+      .addEventListener('dragend', this.dragEnd)
+  },
+  beforeDestroy() {
+    document
+      .getElementById(`${this.tableName}-card`)
+      .removeEventListener('dragenter', this.moveHeader)
+    document
+      .getElementById(`${this.tableName}-card`)
+      .removeEventListener('dragleave', this.dragLeave)
+    document
+      .getElementById(`${this.tableName}-card`)
+      .removeEventListener('dragstart', this.dragStart)
+    document
+      .getElementById(`${this.tableName}-card`)
+      .removeEventListener('dragend', this.dragEnd)
   },
   watch: {
     stateData: {
@@ -203,7 +240,6 @@ export default {
       this.tableData.rows = data.rows
       data.columns.forEach((col) => {
         let obj = new Object({
-          //text: col.attname.charAt(0).toUpperCase() + col.attname.slice(1),
           text: col.attname.replaceAll('_', ' '),
           value: col.attname,
           type: col.format_type,
@@ -226,6 +262,62 @@ export default {
       })
       this.dialogs.editRowDialogState = true
     },
+    dragStart(e) {
+      this.dragList = []
+      let element = e.target
+      if (element.tagName == 'TH' && element.textContent != 'Actions') {
+        this.dragSelected = element.textContent.replaceAll(' ', '_')
+        this.drag = true
+      }
+    },
+    moveHeader(e) {
+      e.preventDefault()
+      let element = e.target
+
+      if (element.tagName == 'TH' && element.textContent != 'Actions') {
+        this.dragList.push(element.textContent.replaceAll(' ', '_'))
+
+        if (
+          Object.values(this.data.columns.map((e) => e.attname)).indexOf(
+            this.dragSelected,
+          ) >= 0
+        ) {
+          this.itemIndex = Object.values(
+            this.data.columns.map((e) => e.attname),
+          ).indexOf(this.dragSelected)
+
+          if (
+            Object.values(this.data.columns.map((e) => e.attname)).indexOf(
+              this.dragList[this.dragList.length - 1],
+            ) >= 0
+          ) {
+            this.targetIndex = Object.values(
+              this.data.columns.map((e) => e.attname),
+            ).indexOf(this.dragList[this.dragList.length - 1])
+            e.target.style['border-left'] = '2px solid #78909c'
+
+            this.drag = true
+          } else {
+            this.drag = false
+          }
+          this.drag = true
+        } else {
+          this.drag = false
+        }
+      } else {
+        this.drag = false
+      }
+    },
+    dragEnd() {
+      if (this.drag) {
+        let header = this.data.columns[this.itemIndex]
+        this.data.columns.splice(this.itemIndex, 1)
+        this.data.columns.splice(this.targetIndex, 0, header)
+      }
+    },
+    dragLeave(e) {
+      e.target.style['border-left'] = ''
+    },
   },
 }
 </script>
@@ -237,5 +329,25 @@ export default {
 }
 .capitalize {
   text-transform: capitalize;
+}
+
+th {
+  user-select: all !important;
+  transition: all 1s ease-in-out;
+}
+th > span {
+  pointer-events: none;
+}
+.borderleft:hover {
+  border-left-width: 2px;
+  border-left-style: solid;
+  border-left-color: cadetblue;
+}
+::selection {
+  color: none;
+  background: none;
+}
+.lowercase {
+  text-transform: lowercase;
 }
 </style>

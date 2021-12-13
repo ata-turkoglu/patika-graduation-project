@@ -9,8 +9,12 @@
       :items-per-page="itemsPerPage"
       loading="false"
       mobile-breakpoint="960"
-      loading-text="Loading... Please wait"
+      :loading-text="$t('Loading... Please wait')"
       class="capitalize"
+      :footer-props="{
+        'items-per-page-text': $t('Rows Per Page'),
+        'items-per-page-all-text': $t('All'),
+      }"
     >
       <template
         v-if="$vuetify.breakpoint.mdAndUp"
@@ -86,7 +90,7 @@
               class="mt-2"
               @click="dialogs.addNewColumnDialogState = true"
             >
-              Add Column
+              {{ $t('Add Column') }}
             </v-btn>
             <v-btn
               color="blue-grey lighten-1"
@@ -95,7 +99,7 @@
               class="mt-2"
               @click="dialogs.deleteColumnDialogState = true"
             >
-              Delete Column
+              {{ $t('Delete Column') }}
             </v-btn>
           </v-row>
         </v-container>
@@ -108,7 +112,7 @@
           class="my-4"
           @click="dialogs.addNewRowDialogState = true"
         >
-          Add New Row
+          {{ $t('Add New Row') }}
         </v-btn>
       </template>
     </v-data-table>
@@ -131,7 +135,6 @@
     <AddNewColumnDialog
       v-if="dialogs.addNewColumnDialogState"
       :tableName="tableName"
-      :maxIndex="tableDataColumnsIndexes"
     />
     <DeleteColumnDialog
       :key="`delete-${tableName}`"
@@ -185,6 +188,12 @@ export default {
     this.setTableData(this.data)
   },
   mounted() {
+    window.onbeforeunload = () => {
+      window.localStorage.setItem(
+        `${this.tableName.toLowerCase()}Cols`,
+        JSON.stringify(this.data.columns.map((c) => c.attname)),
+      )
+    }
     document
       .getElementById(`${this.tableName}-card`)
       .addEventListener('dragenter', this.moveHeader)
@@ -199,18 +208,24 @@ export default {
       .addEventListener('dragend', this.dragEnd)
   },
   beforeDestroy() {
-    document
-      .getElementById(`${this.tableName}-card`)
-      .removeEventListener('dragenter', this.moveHeader)
+    window.localStorage.setItem(
+      `${this.tableName.toLowerCase()}Cols`,
+      JSON.stringify(this.data.columns.map((c) => c.attname)),
+    )
+    /*
     document
       .getElementById(`${this.tableName}-card`)
       .removeEventListener('dragleave', this.dragLeave)
+    document
+      .getElementById(`${this.tableName}-card`)
+      .removeEventListener('dragenter', this.moveHeader)
     document
       .getElementById(`${this.tableName}-card`)
       .removeEventListener('dragstart', this.dragStart)
     document
       .getElementById(`${this.tableName}-card`)
       .removeEventListener('dragend', this.dragEnd)
+      */
   },
   watch: {
     stateData: {
@@ -221,6 +236,12 @@ export default {
         }
       },
     },
+    data: {
+      deep: true,
+      handler(val) {
+        console.log(val)
+      },
+    },
   },
   computed: {
     stateData() {
@@ -229,9 +250,10 @@ export default {
     tableDataColumns() {
       return this.tableData.columns.slice(1, this.tableData.columns.length - 1)
     },
+    /*
     tableDataColumnsIndexes() {
       return this.tableDataColumns.length
-    },
+    },*/
   },
   methods: {
     setTableData(data) {
@@ -263,9 +285,13 @@ export default {
       this.dialogs.editRowDialogState = true
     },
     dragStart(e) {
+      e.target.draggable = true
+      e.target.style.cursor = 'grab'
       this.dragList = []
       let element = e.target
       if (element.tagName == 'TH' && element.textContent != 'Actions') {
+        e.dataTransfer.dropEffect = 'move'
+        console.log(e)
         this.dragSelected = element.textContent.replaceAll(' ', '_')
         this.drag = true
       }
@@ -295,6 +321,7 @@ export default {
               this.data.columns.map((e) => e.attname),
             ).indexOf(this.dragList[this.dragList.length - 1])
             e.target.style['border-left'] = '2px solid #78909c'
+            e.dataTransfer.dropEffect = 'move'
 
             this.drag = true
           } else {
@@ -333,7 +360,8 @@ export default {
 
 th {
   user-select: all !important;
-  transition: all 1s ease-in-out;
+  -moz-user-select: all !important;
+  -webkit-user-select: all !important;
 }
 th > span {
   pointer-events: none;

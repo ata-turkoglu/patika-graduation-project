@@ -15,7 +15,7 @@
     persistent
   >
     <v-card>
-      <v-card-title> Add Row </v-card-title>
+      <v-card-title> {{ $t('Add Row') }} </v-card-title>
       <v-container fluid class="py-6 px-6">
         <v-form v-model="valid">
           <v-row
@@ -71,7 +71,7 @@
                     color="primary"
                     @click=";(dateRangeMenu = false), (newRow[item.value] = [])"
                   >
-                    Cancel
+                    {{ $t('Cancel') }}
                   </v-btn>
                   <v-btn
                     text
@@ -81,7 +81,7 @@
                         correctRange(dateRange, item.value)
                     "
                   >
-                    OK
+                    {{ $t('Ok') }}
                   </v-btn>
                 </v-date-picker>
               </v-menu>
@@ -114,8 +114,9 @@
               class="mx-2"
               text
               @click="$parent.$parent.dialogs.addNewRowDialogState = false"
-              >Cancel</v-btn
             >
+              {{ $t('Cancel') }}
+            </v-btn>
             <v-btn
               color="primary"
               class="mx-2"
@@ -127,7 +128,7 @@
                 newRow['name'] == null ||
                 newRow['name'] == ''
               "
-              >Save</v-btn
+              >{{ $t('Add') }}</v-btn
             >
           </v-row>
         </v-form>

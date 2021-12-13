@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="$parent.$parent.registerDialog" width="25%" persistent>
     <v-card>
-      <v-card-title primary-title> Register </v-card-title>
+      <v-card-title primary-title> {{ $t('Register') }} </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -46,12 +46,12 @@
         <v-container fluid>
           <v-row v-if="$store.state.user.authError">
             <v-alert type="error" dense outlined width="100%">
-              Registration failed
+              {{ $t('Registration failed') }}
             </v-alert>
           </v-row>
           <v-row v-else justify="end">
             <v-btn text @click="$parent.$parent.registerDialog = false">
-              Cancel
+              {{ $t('Cancel') }}
             </v-btn>
             <v-btn text color="primary" @click.prevent="register">
               <v-progress-circular
@@ -61,7 +61,7 @@
                 color="primary"
                 style="background: transparent"
               ></v-progress-circular>
-              <span v-else>Register</span>
+              <span v-else>{{ $t('Register') }}</span>
             </v-btn>
           </v-row>
         </v-container>

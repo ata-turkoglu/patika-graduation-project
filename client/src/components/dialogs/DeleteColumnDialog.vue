@@ -11,11 +11,11 @@
     persistent
   >
     <v-card>
-      <v-card-title>Delete Column</v-card-title>
+      <v-card-title>{{ $t('Delete Column') }}</v-card-title>
       <v-container>
         <v-form v-model="valid">
           <v-select
-            label="Select a Column"
+            :label="$t('Select a Column')"
             outlined
             :rules="[required]"
             :items="headers"
@@ -32,7 +32,7 @@
               text
               @click="$parent.$parent.dialogs.deleteColumnDialogState = false"
             >
-              Cancel
+              {{ $t('Cancel') }}
             </v-btn>
             <v-btn
               color="red darken-2"
@@ -41,7 +41,7 @@
               :disabled="!valid"
               @click="deleteColumn(deletedColumn)"
             >
-              Delete
+              {{ $t('Delete') }}
             </v-btn>
           </v-row>
         </v-container>

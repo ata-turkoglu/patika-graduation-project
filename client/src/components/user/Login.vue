@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="$parent.$parent.loginDialog" width="25%" persistent>
     <v-card>
-      <v-card-title primary-title> Login </v-card-title>
+      <v-card-title primary-title> {{ $t('Login') }} </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -32,12 +32,12 @@
         <v-container fluid>
           <v-row v-if="$store.state.user.authError">
             <v-alert type="error" dense outlined width="100%">
-              Login failed
+              {{ $t('Login failed') }}
             </v-alert>
           </v-row>
           <v-row v-else justify="end">
             <v-btn text @click="$parent.$parent.loginDialog = false">
-              Cancel
+              {{ $t('Cancel') }}
             </v-btn>
             <v-btn text color="primary" @click.prevent="login">
               <v-progress-circular
@@ -47,7 +47,7 @@
                 color="primary"
                 style="background: transparent"
               ></v-progress-circular>
-              <span v-else>Login</span>
+              <span v-else>{{ $t('Login') }}</span>
             </v-btn>
           </v-row>
         </v-container>

@@ -15,7 +15,7 @@
     persistent
   >
     <v-card>
-      <v-card-title>Edit Row</v-card-title>
+      <v-card-title>{{ $t('Edit Row') }}</v-card-title>
       <v-container fluid class="py-6 px-6">
         <v-form v-model="valid">
           <v-row
@@ -104,7 +104,7 @@
               class="mx-2"
               text
               @click="$parent.$parent.dialogs.editRowDialogState = false"
-              >Cancel</v-btn
+              >{{ $t('Cancel') }}</v-btn
             >
             <v-btn
               color="primary"
@@ -117,7 +117,7 @@
                 row['name'] == null ||
                 row['name'] == ''
               "
-              >Save</v-btn
+              >{{ $t('Save') }}</v-btn
             >
           </v-row>
         </v-form>

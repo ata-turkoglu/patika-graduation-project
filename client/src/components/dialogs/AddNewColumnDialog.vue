@@ -11,11 +11,11 @@
     persistent
   >
     <v-card>
-      <v-card-title>Add Column</v-card-title>
+      <v-card-title>{{ $t('Add Column') }}</v-card-title>
       <v-card-text>
         <v-form v-model="valid">
           <v-text-field
-            label="Column Name"
+            :label="$t('Column Name')"
             outlined
             :rules="[required]"
             v-model="newColumn.name"
@@ -25,7 +25,7 @@
             :items="dataTypes"
             outlined
             :rules="[required]"
-            label="Select type of datas"
+            :label="$t('Select type of datas')"
           ></v-autocomplete>
           <v-expand-transition>
             <v-text-field
@@ -40,16 +40,6 @@
               v-model="dataLength"
             ></v-text-field>
           </v-expand-transition>
-          <v-slider
-            label="Select Column Index"
-            step="1"
-            min="1"
-            :max="maxIndex"
-            thumb-label="always"
-            ticks
-            class="mt-4"
-            v-model="newColumn.index"
-          ></v-slider>
         </v-form>
       </v-card-text>
       <v-card-actions justify-end>
@@ -61,7 +51,7 @@
               text
               @click="$parent.$parent.dialogs.addNewColumnDialogState = false"
             >
-              Cancel
+              {{ $t('Cancel') }}
             </v-btn>
             <v-btn
               color="blue darken-2"
@@ -70,7 +60,7 @@
               :disabled="!valid"
               @click="addColumn(newColumn)"
             >
-              Add
+              {{ $t('Add') }}
             </v-btn>
           </v-row>
         </v-container>
@@ -81,7 +71,7 @@
 
 <script>
 export default {
-  props: ['tableName', 'maxIndex'],
+  props: ['tableName'],
   data() {
     return {
       newColumn: {

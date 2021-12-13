@@ -18,12 +18,16 @@
         <v-row justify="center">
           <v-col sm="6" md="4" lg="3" xl="2" class="p-0 d-flex justify-center">
             <router-link v-slot="{ href, navigate }" to="/dashboard" custom>
-              <v-btn :href="href" @click="navigate" text> Dashboard </v-btn>
+              <v-btn :href="href" @click="navigate" text>
+                {{ $t('Dashboard') }}
+              </v-btn>
             </router-link>
           </v-col>
           <v-col sm="6" md="4" lg="3" xl="2" class="p-0 d-flex justify-center">
             <router-link v-slot="{ href, navigate }" to="/" custom>
-              <v-btn :href="href" @click="navigate" text> User Settings </v-btn>
+              <v-btn :href="href" @click="navigate" text>
+                {{ $t('User Settings') }}
+              </v-btn>
             </router-link>
           </v-col>
         </v-row>
@@ -42,20 +46,20 @@
           <v-list-item>
             <v-btn elevation="0" color="white" @click="loginDialog = true">
               <v-icon class="mr-2">mdi-login-variant</v-icon>
-              Log In
+              {{ $t('Log In') }}
             </v-btn>
           </v-list-item>
           <v-list-item>
             <v-btn elevation="0" color="white" @click="registerDialog = true">
               <v-icon class="mr-2">mdi-account-plus</v-icon>
-              Register
+              {{ $t('Register') }}
             </v-btn>
           </v-list-item>
           <v-divider></v-divider>
           <v-list-item>
             <v-btn elevation="0" color="white" @click="logout">
               <v-icon class="mr-2">mdi-logout-variant</v-icon>
-              Log Out
+              {{ $t('Log Out') }}
             </v-btn>
           </v-list-item>
         </v-list>
@@ -68,12 +72,12 @@
         </template>
         <v-list>
           <v-list-item>
-            <v-btn small elevation="0" color="white" @click="lang = 'tr'"
+            <v-btn small elevation="0" color="white" @click="changeLang('tr')"
               >TR</v-btn
             >
           </v-list-item>
           <v-list-item>
-            <v-btn small elevation="0" color="white" @click="lang = 'eng'"
+            <v-btn small elevation="0" color="white" @click="changeLang('eng')"
               >ENG</v-btn
             >
           </v-list-item>
@@ -96,14 +100,14 @@
             <v-list-item>
               <router-link v-slot="{ href, navigate }" to="/dashboard" custom>
                 <span :href="href" @click="navigate" class="router-link-mobile">
-                  <h3>Dashboard</h3>
+                  <h3>{{ $t('Dashboard') }}</h3>
                 </span>
               </router-link>
             </v-list-item>
             <v-list-item>
               <router-link v-slot="{ href, navigate }" to="/" custom>
                 <span :href="href" @click="navigate" class="router-link-mobile">
-                  <h3>User Settings</h3>
+                  <h3>{{ $t('User Settings') }}</h3>
                 </span>
               </router-link>
             </v-list-item>
@@ -116,6 +120,7 @@
 </template>
 
 <script>
+import i18n from './i18n'
 import Register from './components/user/Register.vue'
 import Login from './components/user/Login.vue'
 export default {
@@ -126,7 +131,7 @@ export default {
   name: 'App',
   data() {
     return {
-      lang: 'tr',
+      lang: 'eng',
       drawer: false,
       registerDialog: false,
       loginDialog: false,
@@ -141,10 +146,27 @@ export default {
       )
     }
   },
+  created() {
+    document.addEventListener('beforeunload', () => {
+      let savedCols = {
+        factoriesCols: this.$store.state.datatable.factories.columns.map(
+          (c) => c.attname,
+        ),
+        departmentsCols: this.$store.state.datatable.departments.columns.map(
+          (c) => c.attname,
+        ),
+      }
+      window.localStorage.setItem('columns', JSON.stringify(savedCols))
+    })
+  },
   methods: {
     logout() {
       this.$store.dispatch('user/logout')
       this.$router.push({ path: '/' })
+    },
+    changeLang(lang) {
+      this.lang = lang
+      i18n.locale = lang
     },
   },
 }

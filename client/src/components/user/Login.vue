@@ -14,7 +14,7 @@
           </v-row>
           <v-row>
             <v-text-field
-              label="Password"
+              :label="$t('Password')"
               v-model="user.password"
               :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPass ? 'text' : 'password'"
@@ -23,7 +23,10 @@
             ></v-text-field>
           </v-row>
           <v-row>
-            <v-checkbox label="Remember Me" v-model="remember"></v-checkbox>
+            <v-checkbox
+              :label="$t('Remember Me')"
+              v-model="remember"
+            ></v-checkbox>
             {{ authenticated }}
           </v-row>
         </v-container>
@@ -73,8 +76,8 @@ export default {
       },
       rules: {
         emailRules: [
-          (v) => !!v || 'E-mail is required',
-          (v) => /.+@.+/.test(v) || 'E-mail must be valid',
+          (v) => !!v || this.$t('Email is required'),
+          (v) => /.+@.+/.test(v) || this.$t('Email must be valid'),
         ],
       },
     }

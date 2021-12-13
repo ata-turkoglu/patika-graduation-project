@@ -25,5 +25,16 @@
   "Add": "Ekle",
   "Column Name": "Sütun İsmi",
   "Select type of datas": "Veri tipini seçiniz",
-  "All": "Tümü"
+  "All": "Tümü",
+  "Password": "Şifre",
+  "Remember Me": "Beni Hatırla",
+  "Username": "Kullanıcı Adı",
+  "Name is required": "İsim gerekli",
+  "Name must be at least 8 characters": "İsim en az 8 karakter olmalı",
+  "must be letters, numbers are not allowed": "sadece harf olmalı, rakam içermemeli",
+  "Email is required": "Email gerekli",
+  "Email must be valid": "Hatalı email",
+  "Password is required": "Şifre gerekli",
+  "Password must be at least 8 characters": "Şifre en az 8 karakter olmalı",
+  "At least one capital letter and a number": "En az bir büyük harf bir de rakam olmalı"
 }

@@ -6,7 +6,7 @@
         <v-container>
           <v-row>
             <v-text-field
-              label="Username"
+              :label="$t('Username')"
               v-model="user.username"
               :rules="rules.nameRules"
               required
@@ -22,7 +22,7 @@
           </v-row>
           <v-row>
             <v-text-field
-              label="Password"
+              :label="$t('Password')"
               v-model="user.password"
               :rules="rules.passwordRules"
               :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
@@ -38,7 +38,10 @@
             </v-radio-group>
           </v-row>
           <v-row>
-            <v-checkbox label="Remember Me" v-model="remember"></v-checkbox>
+            <v-checkbox
+              :label="$t('Remember Me')"
+              v-model="remember"
+            ></v-checkbox>
           </v-row>
         </v-container>
       </v-card-text>
@@ -88,22 +91,26 @@ export default {
       },
       rules: {
         nameRules: [
-          (v) => !!v || 'Name is required',
-          (v) => String(v).length >= 8 || 'Name must be at least 8 characters',
+          (v) => !!v || this.$t('Name is required'),
+          (v) =>
+            String(v).length >= 8 ||
+            this.$t('Name must be at least 8 characters'),
           (v) =>
             /^[a-zA-ZğüşöçİĞÜŞÖÇ\s]+$/.test(v) ||
-            'must be letters, numbers are not allowed',
+            this.$t('must be letters, numbers are not allowed'),
         ],
         emailRules: [
-          (v) => !!v || 'E-mail is required',
-          (v) => /.+@.+/.test(v) || 'E-mail must be valid',
+          (v) => !!v || this.$t('Email is required'),
+          (v) => /.+@.+/.test(v) || this.$t('Email must be valid'),
         ],
         passwordRules: [
-          (v) => !!v || 'Invalid password',
-          (v) => String(v).length >= 8 || 'Name must be at least 8 characters',
+          (v) => !!v || this.$t('Password is required'),
+          (v) =>
+            String(v).length >= 8 ||
+            this.$t('Password must be at least 8 characters'),
           (v) =>
             /^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(v) ||
-            'At least one capital letter and a number',
+            this.$t('At least one capital letter and a number'),
         ],
       },
     }

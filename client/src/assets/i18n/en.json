@@ -25,5 +25,16 @@
   "Add": "Add",
   "Column Name": "Column Name",
   "Select type of datas": "Select type of datas",
-  "All": "All"
+  "All": "All",
+  "Password": "Password",
+  "Remember Me": "Remember Me",
+  "Username": "Username",
+  "Name is required": "Name is required",
+  "Name must be at least 8 characters": "Name must be at least 8 characters",
+  "must be letters, numbers are not allowed": "must be letters, numbers are not allowed",
+  "Email is required": "Email is required",
+  "Email must be valid": "E-mail must be valid",
+  "Password is required": "Password is required",
+  "Password must be at least 8 characters": "Password must be at least 8 characters",
+  "At least one capital letter and a number": "At least one capital letter and a number"
 }

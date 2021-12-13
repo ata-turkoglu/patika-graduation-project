@@ -22,10 +22,26 @@ export default {
   },
 
   actions: {
-    async register({ commit, state }, user) {
+    async userExist({ commit }) {
+      if (window.localStorage.getItem('token')) {
+        try {
+          let token = jwt.verify(
+            window.localStorage.getItem('token'),
+            process.env.VUE_APP_SECRET_KEY,
+          )
+          if (token.exp < Date.now()) {
+            commit('setUser', token.user)
+          }
+        } catch {
+          console.log('login had expired')
+        }
+      }
+    },
+
+    async register({ commit, state }, userData) {
       state.authenticated = false
       await axios
-        .post('http://localhost:8088/user/register', user)
+        .post('http://localhost:8088/user/register', userData.user)
         .then((response) => {
           let token = response.data.token
           window.localStorage.setItem('token', token)
@@ -34,7 +50,15 @@ export default {
               token,
               process.env.VUE_APP_SECRET_KEY,
             )
-            window.localStorage.setItem('expires_token', responseToken.exp)
+            if (userData.remember) {
+              window.localStorage.setItem(
+                'user',
+                JSON.stringify({
+                  username: responseToken.user.username,
+                  ...userData.user,
+                }),
+              )
+            }
             commit('setUser', responseToken.user)
           } catch (error) {
             console.error(error)
@@ -43,14 +67,14 @@ export default {
         .catch((err) => {
           console.error(err)
           state.authError = true
-          state.authenticated = true
+          state.authenticated = null
         })
     },
 
-    async login({ commit, state }, user) {
+    async login({ commit, state }, userData) {
       state.authenticated = false
       await axios
-        .post('http://localhost:8088/user/login', user)
+        .post('http://localhost:8088/user/login', userData.user)
         .then((response) => {
           let token = response.data.token
           window.localStorage.setItem('token', token)
@@ -59,7 +83,16 @@ export default {
               token,
               process.env.VUE_APP_SECRET_KEY,
             )
-            window.localStorage.setItem('expires_token', responseToken.exp)
+            if (userData.remember) {
+              window.localStorage.setItem(
+                'user',
+                JSON.stringify({
+                  token: responseToken.user.username,
+                  ...userData.user,
+                  role: responseToken.user.role,
+                }),
+              )
+            }
             commit('setUser', responseToken.user)
           } catch (error) {
             console.error(error)
@@ -68,7 +101,7 @@ export default {
         .catch((error) => {
           console.error(error)
           state.authError = true
-          state.authenticated = true
+          state.authenticated = null
         })
     },
 

@@ -55,7 +55,10 @@
             </v-btn>
             <v-btn text color="primary" @click.prevent="register">
               <v-progress-circular
-                v-if="$store.state.user.authenticated == false"
+                v-if="
+                  $store.state.user.authenticated == false &&
+                  $store.state.user.authError == false
+                "
                 indeterminate
                 :size="20"
                 color="primary"
@@ -86,7 +89,10 @@ export default {
       rules: {
         nameRules: [
           (v) => !!v || 'Name is required',
-          (v) => v.length >= 8 || 'Name must be at least 8 characters',
+          (v) => String(v).length >= 8 || 'Name must be at least 8 characters',
+          (v) =>
+            /^[a-zA-ZğüşöçİĞÜŞÖÇ\s]+$/.test(v) ||
+            'must be letters, numbers are not allowed',
         ],
         emailRules: [
           (v) => !!v || 'E-mail is required',
@@ -94,10 +100,10 @@ export default {
         ],
         passwordRules: [
           (v) => !!v || 'Invalid password',
-          (v) => v.length >= 8 || 'Name must be at least 8 characters',
+          (v) => String(v).length >= 8 || 'Name must be at least 8 characters',
           (v) =>
-            /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(v) ||
-            'At least one capital letter, a number and a special character',
+            /^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(v) ||
+            'At least one capital letter and a number',
         ],
       },
     }
@@ -133,10 +139,11 @@ export default {
   },
   methods: {
     register() {
-      if (this.remember) {
-        window.localStorage.setItem('user', JSON.stringify(this.user))
+      let userData = {
+        remember: this.remember,
+        user: this.user,
       }
-      this.$store.dispatch('user/register', this.user)
+      this.$store.dispatch('user/register', userData)
     },
   },
 }

@@ -41,7 +41,10 @@
             </v-btn>
             <v-btn text color="primary" @click.prevent="login">
               <v-progress-circular
-                v-if="$store.state.user.authenticated == false"
+                v-if="
+                  $store.state.user.authenticated == false &&
+                  $store.state.user.authError == false
+                "
                 indeterminate
                 :size="20"
                 color="primary"
@@ -62,7 +65,7 @@ export default {
     return {
       remember: true,
       authenticated: null,
-      authError: null,
+      //authError: null,
       showPass: false,
       user: {
         email: null,
@@ -101,14 +104,15 @@ export default {
   },
   methods: {
     login() {
-      if (this.remember) {
-        window.localStorage.setItem('user', JSON.stringify(this.user))
-      }
       let payload = {
         email: this.user.email,
         password: this.user.password,
       }
-      this.$store.dispatch('user/login', payload)
+      let userData = {
+        remember: this.remember,
+        user: payload,
+      }
+      this.$store.dispatch('user/login', userData)
     },
   },
 }

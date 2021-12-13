@@ -138,13 +138,7 @@ export default {
     }
   },
   beforeCreate() {
-    let expiresToken = window.localStorage.getItem('expires_token')
-    if (expiresToken < Date.now()) {
-      this.$store.state.user.authenticated = true
-      this.$store.state.user.user = JSON.parse(
-        window.localStorage.getItem('user'),
-      )
-    }
+    this.$store.dispatch('user/userExist')
   },
   created() {
     document.addEventListener('beforeunload', () => {
@@ -162,7 +156,7 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch('user/logout')
-      this.$router.push({ path: '/' })
+      if (this.$route.path != '/') this.$router.push({ path: '/' })
     },
     changeLang(lang) {
       this.lang = lang

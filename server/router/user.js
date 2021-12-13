@@ -10,7 +10,7 @@ router.post("/register",
   check("username")
   .isLength({min:8})
   .withMessage("must be at least 8 chars long")
-  .matches(/^[A-z]+$/)
+  .matches(/^[a-zA-ZğüşöçİĞÜŞÖÇ\s]+$/)
   .withMessage("must be letters, numbers are not allowed"),
   check("email")
   .isEmail()
@@ -19,14 +19,14 @@ router.post("/register",
   check("password")
   .isLength({min:8})
   .withMessage("must be at least 8 chars long")
-  .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/)
+  .matches(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
   .withMessage("invalid password")
 ],
 async (req,res)=>{
   const errors = validationResult(req)
   if(!errors.isEmpty()){
     return res.status(400).json({
-      errors,
+      error:errors,
       message:"validation error"
     })
   }
@@ -40,7 +40,14 @@ async (req,res)=>{
     const salt = await bcrypt.genSalt(10)
     user.password = await bcrypt.hash(password,salt)
 
-    await user.save()
+    try {
+      await user.save()
+    } catch (error) {
+      return res.status(400).json({
+        error,
+        message:"Could not save user"
+      })
+    }
 
     const payload = {
       user:{
@@ -51,7 +58,7 @@ async (req,res)=>{
       }
     }
     
-    jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:10000},(err,token)=>{
+    jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:100},(err,token)=>{
       if(err){
         console.log(err)
         return res.status(500).json({
@@ -59,7 +66,7 @@ async (req,res)=>{
         })
       }
       console.log("token",token)
-      res.status(200).json({
+      return res.status(200).json({
         token
       })
     })
@@ -82,7 +89,6 @@ router.post("/login",
   .withMessage("invalid password")
 ],
 async (req,res)=>{
-
   const errors = validationResult(req)
   if(!errors.isEmpty()){
     return res.status(400).json({
@@ -96,10 +102,10 @@ async (req,res)=>{
   try {
     
     let user = await User.findOne({email})
-    if(!user) return res.status(400).send("User is not exist")
-
+    if(!user) return res.status(400).json({message:"User doesn't exist"})
+    
     const isMatched = await bcrypt.compare(password,user.password)
-    if(!isMatched) return res.status(400).send("Incorrect password")
+    if(!isMatched) return res.status(400).json({message:"Incorrect password"})
 
     const payload = {
       user:{
@@ -110,18 +116,19 @@ async (req,res)=>{
       }
     }
 
-    jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:10000},(err,token)=>{
+    jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:10},(err,token)=>{
       if(err){
         console.log(err)
         return res.status(500).json({
-          err
+          err,
+          message:"create token error"
         })
       }
       res.status(200).json({token})
     })
 
   } catch (error) {
-    res.status(500).json({error})
+    return res.status(500).json({error, message:"Login error"})
   }
 })
 

@@ -32,6 +32,7 @@ export default {
   state: {
     departments: null,
     factories: null,
+    selectedFactory: null,
   },
   mutations: {
     setDepartments(state, [table, data]) {
@@ -65,7 +66,7 @@ export default {
   actions: {
     async getAll({ commit }, data) {
       await axios
-        .get('http://localhost:8088/dashboard/datatable/getall', {
+        .get(process.env.API + '/dashboard/datatable/getall', {
           params: {
             tablename: data.tableName,
           },

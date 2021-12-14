@@ -1,7 +1,7 @@
 <template>
   <v-card max-width="75%" class="mt-16 mx-auto" :id="tableName + '-card'">
     <v-card-title class="title-bg">{{ tableName }}</v-card-title>
-    <!--eslint-disable    -->
+    <!--eslint-disable-->
     <v-data-table
       :headers="tableData.columns"
       :items="tableData.rows"
@@ -20,7 +20,7 @@
         v-if="$vuetify.breakpoint.mdAndUp"
         v-slot:item="{ item, index, headers }"
       >
-        <tr>
+        <tr @click="clickRow(item)">
           <td v-for="(col, indx) in headers" :key="indx">
             <v-simple-checkbox
               v-if="headers[indx].type == 'boolean'"
@@ -60,7 +60,7 @@
             </div>
             <span v-else
               >{{ item[col.value] }}
-              <small class="lowercase" v-if="col.text == 'usage'"> kw</small>
+              <small class="lowercase" v-if="col.text == 'usage'"> kWh</small>
               <small class="lowercase" v-if="col.text == 'fee'"> TL</small>
             </span>
           </td>
@@ -83,6 +83,17 @@
       <template v-slot:top>
         <v-container>
           <v-row justify="end">
+            <v-btn
+            v-if="tableName == 'Departments'"
+              color="blue-grey lighten-1"
+              small
+              text
+              class="mt-2"
+              @click="showAll"
+            >
+              {{ $t('Show All') }}
+            </v-btn>
+            <v-spacer></v-spacer>
             <v-btn
               color="blue-grey lighten-1"
               small
@@ -212,20 +223,6 @@ export default {
       `${this.tableName.toLowerCase()}Cols`,
       JSON.stringify(this.data.columns.map((c) => c.attname)),
     );
-    /*
-    document
-      .getElementById(`${this.tableName}-card`)
-      .removeEventListener('dragleave', this.dragLeave)
-    document
-      .getElementById(`${this.tableName}-card`)
-      .removeEventListener('dragenter', this.moveHeader)
-    document
-      .getElementById(`${this.tableName}-card`)
-      .removeEventListener('dragstart', this.dragStart)
-    document
-      .getElementById(`${this.tableName}-card`)
-      .removeEventListener('dragend', this.dragEnd)
-      */
   },
   watch: {
     stateData: {
@@ -236,10 +233,11 @@ export default {
         }
       },
     },
-    data: {
-      deep: true,
+    '$store.state.datatable.selectedFactory': {
       handler(val) {
-        console.log(val);
+        if (this.tableName == 'Departments') {
+          this.tableData.rows = this.data.rows.filter((e) => e.factory == val);
+        }
       },
     },
   },
@@ -320,8 +318,11 @@ export default {
             this.targetIndex = Object.values(
               this.data.columns.map((e) => e.attname),
             ).indexOf(this.dragList[this.dragList.length - 1]);
-            e.target.style['border-left'] = '2px solid #78909c';
-            e.dataTransfer.dropEffect = 'move';
+            if (this.targetIndex < this.itemIndex) {
+              e.target.style['border-left'] = '2px solid #78909c';
+            } else if (this.targetIndex > this.itemIndex) {
+              e.target.style['border-right'] = '2px solid #78909c';
+            }
 
             this.drag = true;
           } else {
@@ -343,7 +344,15 @@ export default {
       }
     },
     dragLeave(e) {
-      e.target.style['border-left'] = '';
+      e.target.style['border'] = '';
+    },
+    clickRow(item) {
+      if (this.tableName == 'Factories') {
+        this.$store.state.datatable.selectedFactory = item.name;
+      }
+    },
+    showAll() {
+      this.tableData.rows = this.data.rows;
     },
   },
 };
@@ -365,6 +374,9 @@ th {
 }
 th > span {
   pointer-events: none;
+}
+tr {
+  cursor: pointer;
 }
 .borderleft:hover {
   border-left-width: 2px;

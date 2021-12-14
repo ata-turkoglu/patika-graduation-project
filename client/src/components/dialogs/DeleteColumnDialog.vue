@@ -17,7 +17,7 @@
           <v-select
             :label="$t('Select a Column')"
             outlined
-            :rules="[required]"
+            :rules="[checkCol]"
             :items="headers"
             v-model="deletedColumn"
           ></v-select>
@@ -58,6 +58,9 @@ export default {
       deletedColumn: null,
       valid: true,
       required: (value) => !!value || 'Required',
+      checkCol: (value) =>
+        !['id', 'name', 'factory'].includes(value) ||
+        this.$t('You can not delete this column'),
     };
   },
   methods: {

@@ -42,11 +42,11 @@ export default {
       this.$store.dispatch('datatable/deleteRow', {
         tableName: String(this.tableName).toLowerCase(),
         id: this.id,
-      })
-      this.$parent.$parent.dialogs.deleteRowDialogState = false
+      });
+      this.$parent.$parent.dialogs.deleteRowDialogState = false;
     },
   },
-}
+};
 </script>
 
 <style></style>

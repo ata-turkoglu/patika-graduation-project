@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 export default {
   data() {
     return {
@@ -113,18 +113,18 @@ export default {
             this.$t('At least one capital letter and a number'),
         ],
       },
-    }
+    };
   },
   created() {
     if (window.localStorage.getItem('user')) {
-      this.user = JSON.parse(window.localStorage.getItem('user'))
+      this.user = JSON.parse(window.localStorage.getItem('user'));
     }
   },
   watch: {
     '$store.state.user.authenticated': {
       handler(val) {
         if (val) {
-          this.$parent.$parent.registerDialog = false
+          this.$parent.$parent.registerDialog = false;
         }
       },
     },
@@ -132,8 +132,8 @@ export default {
       handler(val) {
         if (val) {
           setTimeout(() => {
-            this.$store.state.user.authError = false
-          }, 1500)
+            this.$store.state.user.authError = false;
+          }, 1500);
         }
       },
     },
@@ -149,11 +149,11 @@ export default {
       let userData = {
         remember: this.remember,
         user: this.user,
-      }
-      this.$store.dispatch('user/register', userData)
+      };
+      this.$store.dispatch('user/register', userData);
     },
   },
-}
+};
 </script>
 
 <style>

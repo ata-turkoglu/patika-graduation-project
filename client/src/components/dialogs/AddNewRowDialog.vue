@@ -69,7 +69,7 @@
                   <v-btn
                     text
                     color="primary"
-                    @click=";(dateRangeMenu = false), (newRow[item.value] = [])"
+                    @click="(dateRangeMenu = false), (newRow[item.value] = [])"
                   >
                     {{ $t('Cancel') }}
                   </v-btn>
@@ -77,7 +77,7 @@
                     text
                     color="primary"
                     @click="
-                      ;(dateRangeMenu = false),
+                      (dateRangeMenu = false),
                         correctRange(dateRange, item.value)
                     "
                   >
@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { validation } from '@/mixins/validator.js'
+import { validation } from '@/mixins/validator.js';
 export default {
   props: ['tableName', 'headers'],
   mixins: [validation],
@@ -149,14 +149,14 @@ export default {
       dateRange: null,
       addRowDialogState: true,
       valid: true,
-    }
+    };
   },
   computed: {
     dateRangePickerValue() {
       if (this.dateRange) {
-        return this.dateRange.join(' ~ ')
+        return this.dateRange.join(' ~ ');
       } else {
-        return ''
+        return '';
       }
     },
   },
@@ -165,14 +165,14 @@ export default {
       this.$store.dispatch('datatable/addNewRow', {
         tableName: String(this.tableName).toLowerCase(),
         row: { ...this.newRow },
-      })
-      this.$parent.$parent.dialogs.addNewRowDialogState = false
+      });
+      this.$parent.$parent.dialogs.addNewRowDialogState = false;
     },
     correctRange(item, value) {
-      this.newRow[value] = `[${item[0]},${item[1]})`
+      this.newRow[value] = `[${item[0]},${item[1]})`;
     },
   },
-}
+};
 </script>
 
 <style>

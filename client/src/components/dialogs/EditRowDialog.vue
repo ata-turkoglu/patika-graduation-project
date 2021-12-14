@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import { validation } from '@/mixins/validator.js'
+import { validation } from '@/mixins/validator.js';
 export default {
   props: ['tableName', 'headers', 'data'],
   mixins: [validation],
@@ -137,41 +137,41 @@ export default {
       dateRangeMenu: false,
       dateRange: null,
       valid: true,
-    }
+    };
   },
   created() {
-    this.row = { ...this.data }
+    this.row = { ...this.data };
   },
   methods: {
     async editRow() {
-      let newRow = await this.correctRange(this.headers, this.row)
-      let cols = await this.headers.map((col) => col.value)
+      let newRow = await this.correctRange(this.headers, this.row);
+      let cols = await this.headers.map((col) => col.value);
       Object.keys(newRow).forEach((item) => {
         if (!cols.includes(item) && item != 'id') {
-          delete newRow[item]
+          delete newRow[item];
         }
-      })
+      });
       await this.$store.dispatch('datatable/editRow', {
         tableName: String(this.tableName).toLowerCase(),
         row: newRow,
-      })
-      this.$parent.$parent.dialogs.editRowDialogState = false
+      });
+      this.$parent.$parent.dialogs.editRowDialogState = false;
     },
     correctRange(columns, row) {
-      let newRow = { ...row }
+      let newRow = { ...row };
       let dateranges = columns
         .filter((col) => col.type == 'daterange')
-        .map((item) => item.value)
+        .map((item) => item.value);
 
       Object.keys(newRow).forEach((item) => {
         if (dateranges.includes(item) && item != null) {
-          newRow[item] = `[${newRow[item][0]},${newRow[item][1]})`
+          newRow[item] = `[${newRow[item][0]},${newRow[item][1]})`;
         }
-      })
-      return newRow
+      });
+      return newRow;
     },
   },
-}
+};
 </script>
 
 <style></style>

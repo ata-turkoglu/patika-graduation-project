@@ -58,18 +58,18 @@ export default {
       deletedColumn: null,
       valid: true,
       required: (value) => !!value || 'Required',
-    }
+    };
   },
   methods: {
     deleteColumn(column) {
       this.$store.dispatch('datatable/deleteColumn', {
         tableName: String(this.tableName).toLowerCase(),
         column,
-      })
-      this.$parent.$parent.dialogs.deleteColumnDialogState = false
+      });
+      this.$parent.$parent.dialogs.deleteColumnDialogState = false;
     },
   },
-}
+};
 </script>
 
 <style></style>

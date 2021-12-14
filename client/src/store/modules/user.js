@@ -1,5 +1,5 @@
-import axios from 'axios'
-import jwt from 'jsonwebtoken'
+import axios from 'axios';
+import jwt from 'jsonwebtoken';
 
 export default {
   namespaced: true,
@@ -11,13 +11,13 @@ export default {
 
   mutations: {
     setUser(state, payload) {
-      state.user = payload
+      state.user = payload;
       setTimeout(() => {
-        state.authenticated = true
-      }, 1000)
+        state.authenticated = true;
+      }, 1000);
     },
     userLogout(state) {
-      state.user = null
+      state.user = null;
     },
   },
 
@@ -28,28 +28,28 @@ export default {
           let token = jwt.verify(
             window.localStorage.getItem('token'),
             process.env.VUE_APP_SECRET_KEY,
-          )
+          );
           if (token.exp < Date.now()) {
-            commit('setUser', token.user)
+            commit('setUser', token.user);
           }
         } catch {
-          console.log('login had expired')
+          console.log('login had expired');
         }
       }
     },
 
     async register({ commit, state }, userData) {
-      state.authenticated = false
+      state.authenticated = false;
       await axios
         .post('http://localhost:8088/user/register', userData.user)
         .then((response) => {
-          let token = response.data.token
-          window.localStorage.setItem('token', token)
+          let token = response.data.token;
+          window.localStorage.setItem('token', token);
           try {
             let responseToken = jwt.verify(
               token,
               process.env.VUE_APP_SECRET_KEY,
-            )
+            );
             if (userData.remember) {
               window.localStorage.setItem(
                 'user',
@@ -57,32 +57,32 @@ export default {
                   username: responseToken.user.username,
                   ...userData.user,
                 }),
-              )
+              );
             }
-            commit('setUser', responseToken.user)
+            commit('setUser', responseToken.user);
           } catch (error) {
-            console.error(error)
+            console.error(error);
           }
         })
         .catch((err) => {
-          console.error(err)
-          state.authError = true
-          state.authenticated = null
-        })
+          console.error(err);
+          state.authError = true;
+          state.authenticated = null;
+        });
     },
 
     async login({ commit, state }, userData) {
-      state.authenticated = false
+      state.authenticated = false;
       await axios
         .post('http://localhost:8088/user/login', userData.user)
         .then((response) => {
-          let token = response.data.token
-          window.localStorage.setItem('token', token)
+          let token = response.data.token;
+          window.localStorage.setItem('token', token);
           try {
             let responseToken = jwt.verify(
               token,
               process.env.VUE_APP_SECRET_KEY,
-            )
+            );
             if (userData.remember) {
               window.localStorage.setItem(
                 'user',
@@ -91,22 +91,22 @@ export default {
                   ...userData.user,
                   role: responseToken.user.role,
                 }),
-              )
+              );
             }
-            commit('setUser', responseToken.user)
+            commit('setUser', responseToken.user);
           } catch (error) {
-            console.error(error)
+            console.error(error);
           }
         })
         .catch((error) => {
-          console.error(error)
-          state.authError = true
-          state.authenticated = null
-        })
+          console.error(error);
+          state.authError = true;
+          state.authenticated = null;
+        });
     },
 
     logout({ commit }) {
-      commit('userLogout')
+      commit('userLogout');
     },
   },
-}
+};

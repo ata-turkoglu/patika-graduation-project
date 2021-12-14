@@ -1,0 +1,7 @@
+{
+  "[javascript]": { "editor.formatOnSave": true }, "eslint.autoFixOnSave": true, "prettier.disableLanguages": []
+  /*"editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": ["javascript"]*/
+}

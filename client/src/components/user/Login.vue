@@ -80,18 +80,18 @@ export default {
           (v) => /.+@.+/.test(v) || this.$t('Email must be valid'),
         ],
       },
-    }
+    };
   },
   mounted() {
     if (window.localStorage.getItem('user')) {
-      this.user = JSON.parse(window.localStorage.getItem('user'))
+      this.user = JSON.parse(window.localStorage.getItem('user'));
     }
   },
   watch: {
     '$store.state.user.authenticated': {
       handler(val) {
         if (val) {
-          this.$parent.$parent.loginDialog = false
+          this.$parent.$parent.loginDialog = false;
         }
       },
     },
@@ -99,8 +99,8 @@ export default {
       handler(val) {
         if (val) {
           setTimeout(() => {
-            this.$store.state.user.authError = false
-          }, 1500)
+            this.$store.state.user.authError = false;
+          }, 1500);
         }
       },
     },
@@ -110,15 +110,15 @@ export default {
       let payload = {
         email: this.user.email,
         password: this.user.password,
-      }
+      };
       let userData = {
         remember: this.remember,
         user: payload,
-      }
-      this.$store.dispatch('user/login', userData)
+      };
+      this.$store.dispatch('user/login', userData);
     },
   },
-}
+};
 </script>
 
 <style></style>

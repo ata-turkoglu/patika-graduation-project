@@ -120,9 +120,9 @@
 </template>
 
 <script>
-import i18n from './i18n'
-import Register from './components/user/Register.vue'
-import Login from './components/user/Login.vue'
+import i18n from './i18n';
+import Register from './components/user/Register.vue';
+import Login from './components/user/Login.vue';
 export default {
   components: {
     Register,
@@ -135,10 +135,10 @@ export default {
       drawer: false,
       registerDialog: false,
       loginDialog: false,
-    }
+    };
   },
   beforeCreate() {
-    this.$store.dispatch('user/userExist')
+    this.$store.dispatch('user/userExist');
   },
   created() {
     document.addEventListener('beforeunload', () => {
@@ -149,21 +149,21 @@ export default {
         departmentsCols: this.$store.state.datatable.departments.columns.map(
           (c) => c.attname,
         ),
-      }
-      window.localStorage.setItem('columns', JSON.stringify(savedCols))
-    })
+      };
+      window.localStorage.setItem('columns', JSON.stringify(savedCols));
+    });
   },
   methods: {
     logout() {
-      this.$store.dispatch('user/logout')
-      if (this.$route.path != '/') this.$router.push({ path: '/' })
+      this.$store.dispatch('user/logout');
+      if (this.$route.path != '/') this.$router.push({ path: '/' });
     },
     changeLang(lang) {
-      this.lang = lang
-      i18n.locale = lang
+      this.lang = lang;
+      i18n.locale = lang;
     },
   },
-}
+};
 </script>
 <style>
 #app {

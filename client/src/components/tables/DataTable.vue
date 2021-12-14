@@ -51,8 +51,8 @@
               <v-icon
                 small
                 @click="
-                  ;(dialogs.deleteRowDialogState = true),
-                    (idForDelete = item.id)
+                  (dialogs.deleteRowDialogState = true),
+                    (idForDelete = item.id);
                 "
               >
                 mdi-delete
@@ -74,7 +74,7 @@
         <v-icon
           small
           @click="
-            ;(dialogs.deleteRowDialogState = true), (idForDelete = item.id)
+            (dialogs.deleteRowDialogState = true), (idForDelete = item.id);
           "
         >
           mdi-delete
@@ -146,11 +146,11 @@
 </template>
 
 <script>
-import AddNewRowDialog from '../dialogs/AddNewRowDialog.vue'
-import EditRowDialog from '../dialogs/EditRowDialog.vue'
-import DeleteRowDialog from '../dialogs/DeleteRowDialog.vue'
-import AddNewColumnDialog from '../dialogs/AddNewColumnDialog.vue'
-import DeleteColumnDialog from '../dialogs/DeleteColumnDialog.vue'
+import AddNewRowDialog from '../dialogs/AddNewRowDialog.vue';
+import EditRowDialog from '../dialogs/EditRowDialog.vue';
+import DeleteRowDialog from '../dialogs/DeleteRowDialog.vue';
+import AddNewColumnDialog from '../dialogs/AddNewColumnDialog.vue';
+import DeleteColumnDialog from '../dialogs/DeleteColumnDialog.vue';
 export default {
   props: ['tableName', 'data'],
   components: {
@@ -182,36 +182,36 @@ export default {
       dragList: [],
       edittingRow: null,
       idForDelete: null,
-    }
+    };
   },
   created() {
-    this.setTableData(this.data)
+    this.setTableData(this.data);
   },
   mounted() {
     window.onbeforeunload = () => {
       window.localStorage.setItem(
         `${this.tableName.toLowerCase()}Cols`,
         JSON.stringify(this.data.columns.map((c) => c.attname)),
-      )
-    }
+      );
+    };
     document
       .getElementById(`${this.tableName}-card`)
-      .addEventListener('dragenter', this.moveHeader)
+      .addEventListener('dragenter', this.moveHeader);
     document
       .getElementById(`${this.tableName}-card`)
-      .addEventListener('dragleave', this.dragLeave)
+      .addEventListener('dragleave', this.dragLeave);
     document
       .getElementById(`${this.tableName}-card`)
-      .addEventListener('dragstart', this.dragStart)
+      .addEventListener('dragstart', this.dragStart);
     document
       .getElementById(`${this.tableName}-card`)
-      .addEventListener('dragend', this.dragEnd)
+      .addEventListener('dragend', this.dragEnd);
   },
   beforeDestroy() {
     window.localStorage.setItem(
       `${this.tableName.toLowerCase()}Cols`,
       JSON.stringify(this.data.columns.map((c) => c.attname)),
-    )
+    );
     /*
     document
       .getElementById(`${this.tableName}-card`)
@@ -232,23 +232,23 @@ export default {
       deep: true,
       handler(val) {
         if (val != null) {
-          this.setTableData(val)
+          this.setTableData(val);
         }
       },
     },
     data: {
       deep: true,
       handler(val) {
-        console.log(val)
+        console.log(val);
       },
     },
   },
   computed: {
     stateData() {
-      return this.$store.state.datatable[this.tableName.toLowerCase()]
+      return this.$store.state.datatable[this.tableName.toLowerCase()];
     },
     tableDataColumns() {
-      return this.tableData.columns.slice(1, this.tableData.columns.length - 1)
+      return this.tableData.columns.slice(1, this.tableData.columns.length - 1);
     },
     /*
     tableDataColumnsIndexes() {
@@ -257,51 +257,51 @@ export default {
   },
   methods: {
     setTableData(data) {
-      this.tableData.columns = []
-      this.tableData.rows = []
-      this.tableData.rows = data.rows
+      this.tableData.columns = [];
+      this.tableData.rows = [];
+      this.tableData.rows = data.rows;
       data.columns.forEach((col) => {
         let obj = new Object({
           text: col.attname.replaceAll('_', ' '),
           value: col.attname,
           type: col.format_type,
-        })
-        this.tableData.columns.push(obj)
-      })
+        });
+        this.tableData.columns.push(obj);
+      });
       this.tableData.columns.push({
         text: 'Actions',
         value: 'actions',
         sortable: false,
-      })
-      this.tablekey++
+      });
+      this.tablekey++;
     },
     editItem(item) {
-      this.edittingRow = this.tableData.rows.find((el) => el.id == item.id)
+      this.edittingRow = this.tableData.rows.find((el) => el.id == item.id);
       this.tableDataColumns.forEach((el) => {
         if (Object.keys(item).includes(el.value) == false) {
-          this.edittingRow[el.value] = null
+          this.edittingRow[el.value] = null;
         }
-      })
-      this.dialogs.editRowDialogState = true
+      });
+      this.dialogs.editRowDialogState = true;
     },
     dragStart(e) {
-      e.target.draggable = true
-      e.target.style.cursor = 'grab'
-      this.dragList = []
-      let element = e.target
+      e.target.draggable = true;
+      e.target.style.cursor = 'grab';
+      this.dragList = [];
+      let element = e.target;
       if (element.tagName == 'TH' && element.textContent != 'Actions') {
-        e.dataTransfer.dropEffect = 'move'
-        console.log(e)
-        this.dragSelected = element.textContent.replaceAll(' ', '_')
-        this.drag = true
+        e.dataTransfer.dropEffect = 'move';
+        console.log(e);
+        this.dragSelected = element.textContent.replaceAll(' ', '_');
+        this.drag = true;
       }
     },
     moveHeader(e) {
-      e.preventDefault()
-      let element = e.target
+      e.preventDefault();
+      let element = e.target;
 
       if (element.tagName == 'TH' && element.textContent != 'Actions') {
-        this.dragList.push(element.textContent.replaceAll(' ', '_'))
+        this.dragList.push(element.textContent.replaceAll(' ', '_'));
 
         if (
           Object.values(this.data.columns.map((e) => e.attname)).indexOf(
@@ -310,7 +310,7 @@ export default {
         ) {
           this.itemIndex = Object.values(
             this.data.columns.map((e) => e.attname),
-          ).indexOf(this.dragSelected)
+          ).indexOf(this.dragSelected);
 
           if (
             Object.values(this.data.columns.map((e) => e.attname)).indexOf(
@@ -319,34 +319,34 @@ export default {
           ) {
             this.targetIndex = Object.values(
               this.data.columns.map((e) => e.attname),
-            ).indexOf(this.dragList[this.dragList.length - 1])
-            e.target.style['border-left'] = '2px solid #78909c'
-            e.dataTransfer.dropEffect = 'move'
+            ).indexOf(this.dragList[this.dragList.length - 1]);
+            e.target.style['border-left'] = '2px solid #78909c';
+            e.dataTransfer.dropEffect = 'move';
 
-            this.drag = true
+            this.drag = true;
           } else {
-            this.drag = false
+            this.drag = false;
           }
-          this.drag = true
+          this.drag = true;
         } else {
-          this.drag = false
+          this.drag = false;
         }
       } else {
-        this.drag = false
+        this.drag = false;
       }
     },
     dragEnd() {
       if (this.drag) {
-        let header = this.data.columns[this.itemIndex]
-        this.data.columns.splice(this.itemIndex, 1)
-        this.data.columns.splice(this.targetIndex, 0, header)
+        let header = this.data.columns[this.itemIndex];
+        this.data.columns.splice(this.itemIndex, 1);
+        this.data.columns.splice(this.targetIndex, 0, header);
       }
     },
     dragLeave(e) {
-      e.target.style['border-left'] = ''
+      e.target.style['border-left'] = '';
     },
   },
-}
+};
 </script>
 
 <style>

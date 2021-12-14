@@ -95,30 +95,30 @@ export default {
       dataLength: null,
       valid: true,
       required: (value) => !!value || 'Required',
-    }
+    };
   },
   methods: {
     addColumn(column) {
-      let item = {}
+      let item = {};
       if (column.type == 'Char' || column.type == 'Character Varying') {
         item = {
           name: column.name.replaceAll(' ', '_'),
           type: String(column.type).toLowerCase() + `(${this.dataLength})`,
-        }
+        };
       } else {
         item = {
           name: column.name.replaceAll(' ', '_'),
           type: String(column.type).toLowerCase(),
-        }
+        };
       }
       this.$store.dispatch('datatable/addNewColumn', {
         tableName: String(this.tableName).toLowerCase(),
         column: item,
-      })
-      this.$parent.$parent.dialogs.addNewColumnDialogState = false
+      });
+      this.$parent.$parent.dialogs.addNewColumnDialogState = false;
     },
   },
-}
+};
 </script>
 
 <style></style>
